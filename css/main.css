@@ -332,3 +332,297 @@ button {
 button:hover {
     background: var(--card-deep-purple);
 }
+
+
+/* Section Styling */
+section {
+    padding: 5rem 2rem;
+    position: relative;
+}
+
+.section-title {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--card-lavender);
+    text-shadow: 0 0 15px var(--card-purple);
+}
+
+/* Factions Grid */
+.faction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.faction-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.faction-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(96, 54, 170, 0.3);
+}
+
+.faction-sigil {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    border: 3px solid;
+}
+
+/* Faction Colors */
+.faction-card[data-faction="chaos"] .faction-sigil { background: var(--chaos-primary); border-color: var(--chaos-secondary); }
+.faction-card[data-faction="earth"] .faction-sigil { background: var(--earth); border-color: #5a3a2a; }
+.faction-card[data-faction="fairy"] .faction-sigil { background: var(--fairy); border-color: #fff; }
+.faction-card[data-faction="fungus"] .faction-sigil { background: var(--fungus); border-color: #0a0; }
+.faction-card[data-faction="greed"] .faction-sigil { background: var(--greed); border-color: #fff; }
+.faction-card[data-faction="lava"] .faction-sigil { background: var(--lava); border-color: #ff4444; }
+.faction-card[data-faction="lightning"] .faction-sigil { background: var(--lightning); border-color: #ffff44; }
+.faction-card[data-faction="moon"] .faction-sigil { background: var(--moon); border-color: #ccc; }
+.faction-card[data-faction="ocean"] .faction-sigil { background: var(--ocean); border-color: #4444ff; }
+.faction-card[data-faction="purity"] .faction-sigil { background: var(--purity); border-color: #ffd700; }
+.faction-card[data-faction="sorcery"] .faction-sigil { background: var(--sorcery); border-color: #9932cc; }
+.faction-card[data-faction="spirit"] .faction-sigil { background: var(--spirit); border-color: #999; }
+.faction-card[data-faction="sun"] .faction-sigil { background: var(--sun); border-color: #ffaa44; }
+.faction-card[data-faction="tar"] .faction-sigil { background: var(--tar); border-color: #333; }
+
+.faction-sigil.unknown {
+    background: repeating-linear-gradient(45deg, #222, #222 10px, #333 10px, #333 20px);
+    border-color: var(--card-gold);
+}
+
+.faction-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--card-beige);
+}
+
+/* Lock Overlay */
+.faction-lock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    transition: opacity 0.5s;
+}
+
+.faction-lock.unlocked {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lock-date {
+    font-family: var(--font-display);
+    color: var(--card-light-purple);
+    font-size: 0.9rem;
+}
+
+/* Vault Grid */
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.vault-slot {
+    aspect-ratio: 3/4;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--card-purple);
+}
+
+.vault-card-back {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--card-deep-purple), var(--card-mid-purple));
+    position: relative;
+}
+
+.vault-card-back::after {
+    content: '?';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: 4rem;
+    color: var(--card-lavender);
+    opacity: 0.3;
+}
+
+.vault-slot.unlocked .vault-card-back {
+    background: linear-gradient(135deg, var(--card-purple), var(--card-light-purple));
+}
+
+.drop-date {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    color: var(--card-beige);
+    font-size: 0.9rem;
+}
+
+/* Timeline */
+.roadmap {
+    background: linear-gradient(180deg, var(--bg-primary), #0f0a1a);
+}
+
+.timeline {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 3px solid var(--accent);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.timeline-dot.active {
+    background: var(--card-light-purple);
+    box-shadow: 0 0 15px var(--card-purple);
+}
+
+.timeline-content {
+    width: 40%;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.timeline-content.locked {
+    filter: blur(3px);
+    opacity: 0.5;
+}
+
+.timeline-date {
+    font-family: var(--font-display);
+    color: var(--card-gold);
+    font-size: 0.9rem;
+}
+
+.timeline-content h4 {
+    color: var(--card-lavender);
+    margin: 0.5rem 0;
+}
+
+/* Q&A */
+.qa-item {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    margin-bottom: 1rem;
+}
+
+.qa-q {
+    font-family: var(--font-display);
+    color: var(--card-light-purple);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.qa-a {
+    color: var(--text-secondary);
+}
+
+.btn-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--card-purple);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: var(--font-display);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--bg-secondary);
+    border-top: 2px solid var(--accent);
+}
+
+footer p {
+    font-size: 1.5rem;
+    color: var(--card-lavender);
+    margin-bottom: 0.5rem;
+}
+
+footer span {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Animations */
+@keyframes pulse-lock {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+.locked .lock-date {
+    animation: pulse-lock 2s infinite;
+}
