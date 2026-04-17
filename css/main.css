@@ -130,7 +130,7 @@ body {
 
 /* Hero */
 .hero {
-    text-align: center;
+    text-align: left;
     padding: 6rem 2rem;
     background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
