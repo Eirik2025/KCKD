@@ -89,23 +89,32 @@ body {
 /* Navigation */
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 1rem 2rem;
     background: var(--bg-secondary);
     border-bottom: 2px solid var(--accent);
+    position: relative;
 }
 
 .logo {
     font-size: 2rem;
     color: var(--card-lavender);
     text-shadow: 0 0 10px var(--card-purple);
+    position: absolute;
+    left: 2rem;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
 }
 
 .nav-links a {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     text-decoration: none;
-    margin-left: 2rem;
+    font-size: 1.1rem;
     transition: color 0.3s;
 }
 
