@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kloak & Daggurrs: Klandestine</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo font-display">K&D</div>
+        <div class="nav-links">
+            <a href="#cards">Cards</a>
+            <a href="#qa">Q&A</a>
+            <a href="#contact">Contact</a>
+            <a href="#login" class="btn-login">Sign In</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1 class="font-display">Kloak & Daggurrs</h1>
+        <h2 class="subtitle">Klandestine</h2>
+        <p class="tagline">Some secrets are worth keeping. Others are worth killing for.</p>
+        <div class="countdown-container" id="countdown">
+            <!-- Countdown injected here -->
+        </div>
+    </header>
+
+    <!-- Card Showcase Section -->
+    <section id="cards" class="card-showcase">
+        <h3 class="font-display">Whispers of What's to Come</h3>
+        <div class="card-grid" id="cardGrid">
+            <!-- Cards injected via JS -->
+        </div>
+    </section>
+
+    <!-- Q&A Preview -->
+    <section id="qa" class="qa-section">
+        <h3 class="font-display">Questions & Secrets</h3>
+        <div class="qa-list" id="qaList">
+            <!-- Q&A injected via JS -->
+        </div>
+    </section>
+
+    <!-- Contact/Deck Request -->
+    <section id="contact" class="contact-section">
+        <h3 class="font-display">Request an Audience</h3>
+        <form id="deckRequestForm">
+            <input type="email" placeholder="Your email" required>
+            <textarea placeholder="What do you seek?" required></textarea>
+            <button type="submit">Send Request</button>
+        </form>
+    </section>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

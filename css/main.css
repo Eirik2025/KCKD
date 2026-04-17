@@ -1,0 +1,212 @@
+/* Font Face */
+@font-face {
+    font-family: 'FairyDustBand';
+    src: url('../assets/fonts/FairyDustBand.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* CSS Variables for Your Colors */
+:root {
+    /* Faction Colors */
+    --chaos-primary: #000000;
+    --chaos-secondary: #ff0000;
+    --earth: #AD8163;
+    --fairy: #00E3FF;
+    --fungus: #057C00;
+    --greed: #FF00AE;
+    --lava: #B60000;
+    --lightning: #ebff00;
+    --moon: #FFFFFF;
+    --ocean: #0300B6;
+    --purity: #A67C00;
+    --sorcery: #3D006C;
+    --spirit: #6C6C6C;
+    --sun: #FF8D00;
+    --tar: #000000;
+    
+    /* Card Back Palette */
+    --card-purple: #6036aa;
+    --card-lavender: #d8acef;
+    --card-light-purple: #ceabfc;
+    --card-black: #000002;
+    --card-deep-purple: #381a5f;
+    --card-mid-purple: #36245b;
+    --card-brown: #3c1e13;
+    --card-gray: #7d746e;
+    --card-dark-brown: #251103;
+    --card-beige: #c4b49e;
+    --card-gold: #755e3b;
+    
+    /* Site Theme - Dark with Purple Accents */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #1a1a2e;
+    --text-primary: #ffffff;
+    --text-secondary: #c4b49e;
+    --accent: #6036aa;
+    
+    /* Typography */
+    --font-display: 'FairyDustBand', fantasy;
+    --font-body: 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Display Font Class */
+.font-display {
+    font-family: var(--font-display);
+}
+
+/* Utility Classes for Faction Colors */
+.text-chaos { color: var(--chaos-secondary); }
+.text-earth { color: var(--earth); }
+.text-fairy { color: var(--fairy); }
+.text-fungus { color: var(--fungus); }
+.text-greed { color: var(--greed); }
+.text-lava { color: var(--lava); }
+.text-lightning { color: var(--lightning); }
+.text-moon { color: var(--moon); }
+.text-ocean { color: var(--ocean); }
+.text-purity { color: var(--purity); }
+.text-sorcery { color: var(--sorcery); }
+.text-spirit { color: var(--spirit); }
+.text-sun { color: var(--sun); }
+.text-tar { color: var(--tar); }
+
+
+/* Navigation */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--accent);
+}
+
+.logo {
+    font-size: 2rem;
+    color: var(--card-lavender);
+    text-shadow: 0 0 10px var(--card-purple);
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-left: 2rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--card-light-purple);
+}
+
+.btn-login {
+    border: 1px solid var(--accent);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.hero h1 {
+    font-size: 4rem;
+    color: var(--card-lavender);
+    text-shadow: 0 0 20px var(--card-purple);
+    margin-bottom: 0.5rem;
+}
+
+.hero .subtitle {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--card-beige);
+    margin-bottom: 1rem;
+}
+
+.tagline {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+/* Card Grid */
+.card-showcase {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.card-showcase h3 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--card-light-purple);
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sections */
+.qa-section, .contact-section {
+    padding: 4rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.qa-section h3, .contact-section h3 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--card-lavender);
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input, textarea {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    border-radius: 4px;
+}
+
+button {
+    padding: 1rem 2rem;
+    background: var(--card-purple);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: var(--card-deep-purple);
+}
