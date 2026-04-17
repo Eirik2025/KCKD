@@ -626,3 +626,63 @@ footer span {
 .locked .lock-date {
     animation: pulse-lock 2s infinite;
 }
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    margin: 10% auto;
+    padding: 2rem;
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--card-beige);
+}
+
+#authForms input, #userPanel p {
+    margin-bottom: 1rem;
+}
+
+#authForms a {
+    color: var(--card-light-purple);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#userEmail {
+    color: var(--card-beige);
+    word-break: break-all;
+}
+
+/* Admin Link */
+.nav-links .admin-link {
+    color: var(--chaos-secondary);
+    text-shadow: 0 0 10px var(--chaos-secondary);
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}

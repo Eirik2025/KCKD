@@ -74,25 +74,26 @@
     <script type="module">
         import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase } from './js/supabase.js';
 
-        // Auth state
         async function checkAuth() {
             const { data: { user } } = await supabase.auth.getUser();
+            
             if (!user) {
                 document.getElementById('loginForm').style.display = 'block';
                 document.getElementById('adminPanel').style.display = 'none';
-                document.getElementById('adminStatus').textContent = 'Not signed in';
+                document.getElementById('adminStatus').textContent = 'Authentication required';
                 return;
             }
 
             const admin = await isAdmin();
             if (!admin) {
-                document.getElementById('adminStatus').innerHTML = '<span style="color: var(--lava)">Access Denied: Admin only</span>';
+                document.getElementById('adminStatus').innerHTML = '<span style="color: var(--lava)">Access Denied: Admin credentials required</span>';
+                document.getElementById('loginForm').style.display = 'none';
                 return;
             }
 
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminStatus').innerHTML = '<span style="color: var(--fungus)">Admin Access Granted</span>';
+            document.getElementById('adminStatus').innerHTML = `<span style="color: var(--fungus)">Welcome, ${user.email}</span>`;
             loadDrops();
         }
 
@@ -106,8 +107,9 @@
 
         window.signOutUser = async () => {
             await signOut();
-            location.reload();
+            window.location.href = 'index.html';
         };
+
 
         // Load all drops
         async function loadDrops() {
@@ -201,8 +203,6 @@
 
         // Init
         checkAuth();
-        
-        // Listen for auth changes
         supabase.auth.onAuthStateChange(() => checkAuth());
     </script>
 </body>

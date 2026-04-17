@@ -7,6 +7,33 @@
     <link rel="stylesheet" href="css/main.css">
     <script src=""https://cdn.jsdelivr.net/npm/@supabase-js@2"></script>
 </head>
+<!-- Auth Modal -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeAuth()">&times;</span>
+        <div id="authForms">
+            <div id="loginForm">
+                <h3 class="font-display">Enter the Shadows</h3>
+                <input type="email" id="authEmail" placeholder="Email">
+                <input type="password" id="authPass" placeholder="Password">
+                <button onclick="handleLogin()">Sign In</button>
+                <p>Not initiated? <a onclick="toggleAuthMode()">Join the ranks</a></p>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <h3 class="font-display">Join the Ranks</h3>
+                <input type="email" id="regEmail" placeholder="Email">
+                <input type="password" id="regPass" placeholder="Password">
+                <button onclick="handleRegister()">Sign Up</button>
+                <p>Already marked? <a onclick="toggleAuthMode()">Sign In</a></p>
+            </div>
+        </div>
+        <div id="userPanel" style="display: none;">
+            <h3 class="font-display">Welcome, Operative</h3>
+            <p id="userEmail"></p>
+            <button onclick="handleLogout()">Sign Out</button>
+        </div>
+    </div>
+</div>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -17,10 +44,17 @@
             <a href="#roadmap">Whispers</a>
             <a href="#qa">Q&A</a>
             <a href="#contact">Contact</a>
-            <a href="#login" class="btn-login">Sign In</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="#" id="authBtn" class="btn-login" onclick="openAuth(); return false;">Sign In</a>
         </div>
     </nav>
-
+    <nav class="navbar">
+        <div class="logo font-display">K&D Control</div>
+        <div class="nav-links">
+            <a href="index.html">Back to Site</a>
+            <button onclick="signOutUser()" class="btn-login">Sign Out</button>
+        </div>
+    </nav>
     <!-- Hero (Done) -->
     <header class="hero">
         <div class="hero-content">
