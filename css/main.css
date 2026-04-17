@@ -256,14 +256,23 @@ body {
     justify-content: center;
 }
 
-/* Blur effect on revealed card */
-.card-back .blurred {
-    filter: blur(8px) brightness(0.7);
+/* Blur both sides */
+.blurred-front {
+    filter: blur(4px) brightness(0.8);
     transition: filter 0.3s;
 }
 
+.card-flip:hover .blurred-front {
+    filter: blur(0) brightness(1);
+}
+
+/* Keep back blurred even on hover for mystery */
+.card-back .blurred {
+    filter: blur(8px) brightness(0.6);
+}
+
 .card-flip:hover .card-back .blurred {
-    filter: blur(4px) brightness(0.8);
+    filter: blur(6px) brightness(0.7); /* Stays blurry */
 }
 
 /* Mystery overlay */
