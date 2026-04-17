@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K&D Admin - Vault Control</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .drop-card { background: var(--bg-secondary); border: 1px solid var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
+        .drop-card.locked { border-color: var(--chaos-secondary); opacity: 0.7; }
+        .drop-card.unlocked { border-color: var(--fungus); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        input, select, textarea { width: 100%; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--accent); color: white; border-radius: 4px; }
+        .btn-save { background: var(--fungus); color: white; border: none; padding: 0.75rem 1.5rem; cursor: pointer; font-family: var(--font-display); }
+        .btn-delete { background: var(--lava); color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; }
+        .btn-add { background: var(--ocean); color: white; border: none; padding: 1rem 2rem; cursor: pointer; font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 2rem; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; margin-left: 0.5rem; }
+        .status-locked { background: var(--lava); }
+        .status-unlocked { background: var(--fungus); }
+        .status-hidden { background: var(--spirit); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo font-display">K&D Admin</div>
+        <div class="nav-links">
+            <a href="index.html">Back to Site</a>
+            <button onclick="signOutUser()" class="btn-login">Sign Out</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="font-display">Vault Control</h1>
+            <div id="adminStatus">Checking access...</div>
+        </div>
+
+        <div id="loginForm" style="display: none;">
+            <h2>Authentication Required</h2>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button onclick="signInUser()" class="btn-save">Sign In</button>
+        </div>
+
+        <div id="adminPanel" style="display: none;">
+            <button onclick="showAddForm()" class="btn-add">+ Schedule New Drop</button>
+            
+            <div id="addForm" style="display: none; margin-bottom: 2rem;">
+                <h3>New Drop</h3>
+                <div class="form-grid">
+                    <input type="text" id="newTitle" placeholder="Title">
+                    <select id="newType">
+                        <option value="faction">Faction</option>
+                        <option value="vault">Vault Card</option>
+                        <option value="timeline">Timeline Event</option>
+                        <option value="hero">Hero Section</option>
+                    </select>
+                    <input type="datetime-local" id="newDate">
+                    <input type="text" id="newImage" placeholder="Image path (e.g., assets/cards/...)" value="assets/cards/card-back.png">
+                    <input type="number" id="newBlur" placeholder="Blur px" value="8">
+                    <input type="number" id="newOrder" placeholder="Sort Order" value="0">
+                    <textarea id="newDesc" placeholder="Description" style="grid-column: span 2;"></textarea>
+                </div>
+                <button onclick="addDrop()" class="btn-save" style="margin-top: 1rem;">Create Drop</button>
+                <button onclick="hideAddForm()" style="margin-left: 1rem;">Cancel</button>
+            </div>
+
+            <div id="dropsList"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase } from './js/supabase.js';
+
+        // Auth state
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('adminStatus').textContent = 'Not signed in';
+                return;
+            }
+
+            const admin = await isAdmin();
+            if (!admin) {
+                document.getElementById('adminStatus').innerHTML = '<span style="color: var(--lava)">Access Denied: Admin only</span>';
+                return;
+            }
+
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminStatus').innerHTML = '<span style="color: var(--fungus)">Admin Access Granted</span>';
+            loadDrops();
+        }
+
+        window.signInUser = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            const { error } = await signIn(email, pass);
+            if (error) alert(error.message);
+            else checkAuth();
+        };
+
+        window.signOutUser = async () => {
+            await signOut();
+            location.reload();
+        };
+
+        // Load all drops
+        async function loadDrops() {
+            const drops = await getAllDropsAdmin();
+            const container = document.getElementById('dropsList');
+            
+            container.innerHTML = drops.map(drop => {
+                const isLocked = new Date(drop.unlock_at) > new Date();
+                const statusClass = drop.is_visible ? (isLocked ? 'locked' : 'unlocked') : '';
+                const statusText = !drop.is_visible ? 'HIDDEN' : (isLocked ? 'LOCKED' : 'UNLOCKED');
+                const badgeClass = !drop.is_visible ? 'status-hidden' : (isLocked ? 'status-locked' : 'status-unlocked');
+                
+                return `
+                <div class="drop-card ${statusClass}" data-id="${drop.id}">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <h4 class="font-display">${drop.title} <span class="status-badge ${badgeClass}">${statusText}</span></h4>
+                        <button onclick="deleteThis('${drop.id}')" class="btn-delete">Delete</button>
+                    </div>
+                    <div class="form-grid">
+                        <input type="text" class="edit-title" value="${drop.title}">
+                        <select class="edit-type">
+                            <option value="faction" ${drop.drop_type === 'faction' ? 'selected' : ''}>Faction</option>
+                            <option value="vault" ${drop.drop_type === 'vault' ? 'selected' : ''}>Vault</option>
+                            <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
+                            <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
+                        </select>
+                        <input type="datetime-local" class="edit-date" value="${drop.unlock_at.slice(0, 16)}">
+                        <input type="text" class="edit-image" value="${drop.image_url || ''}">
+                        <input type="number" class="edit-blur" value="${drop.blur_level}">
+                        <input type="number" class="edit-order" value="${drop.sort_order}">
+                        <label style="grid-column: span 2;">
+                            <input type="checkbox" class="edit-visible" ${drop.is_visible ? 'checked' : ''}> Visible on site
+                        </label>
+                        <textarea class="edit-desc" placeholder="Description" style="grid-column: span 2;">${drop.description || ''}</textarea>
+                    </div>
+                    <button onclick="saveThis('${drop.id}')" class="btn-save" style="margin-top: 1rem;">Save Changes</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.saveThis = async (id) => {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            const updates = {
+                title: card.querySelector('.edit-title').value,
+                drop_type: card.querySelector('.edit-type').value,
+                unlock_at: new Date(card.querySelector('.edit-date').value).toISOString(),
+                image_url: card.querySelector('.edit-image').value,
+                blur_level: parseInt(card.querySelector('.edit-blur').value),
+                sort_order: parseInt(card.querySelector('.edit-order').value),
+                is_visible: card.querySelector('.edit-visible').checked,
+                description: card.querySelector('.edit-desc').value
+            };
+            
+            const { error } = await updateDrop(id, updates);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Drop updated!');
+                loadDrops();
+            }
+        };
+
+        window.deleteThis = async (id) => {
+            if (!confirm('Delete this drop?')) return;
+            const { error } = await deleteDrop(id);
+            if (!error) loadDrops();
+        };
+
+        window.showAddForm = () => document.getElementById('addForm').style.display = 'block';
+        window.hideAddForm = () => document.getElementById('addForm').style.display = 'none';
+
+        window.addDrop = async () => {
+            const drop = {
+                title: document.getElementById('newTitle').value,
+                drop_type: document.getElementById('newType').value,
+                unlock_at: new Date(document.getElementById('newDate').value).toISOString(),
+                image_url: document.getElementById('newImage').value,
+                blur_level: parseInt(document.getElementById('newBlur').value),
+                sort_order: parseInt(document.getElementById('newOrder').value),
+                description: document.getElementById('newDesc').value,
+                is_visible: true
+            };
+            
+            const { error } = await createDrop(drop);
+            if (error) alert('Error: ' + error.message);
+            else {
+                hideAddForm();
+                loadDrops();
+            }
+        };
+
+        // Init
+        checkAuth();
+        
+        // Listen for auth changes
+        supabase.auth.onAuthStateChange(() => checkAuth());
+    </script>
+</body>
+</html>
