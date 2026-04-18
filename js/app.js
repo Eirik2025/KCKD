@@ -1,10 +1,6 @@
 console.log('APP.JS LOADED');
 
-// Create Supabase client directly - don't import from supabase.js
-const SUPABASE_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { supabase } from './supabase.js';
 
 async function isAdmin() {
     try {
@@ -63,8 +59,13 @@ async function updateNavbar() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM ready');
+
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('Session:', session);
+
     updateNavbar();
+
     supabase.auth.onAuthStateChange(() => updateNavbar());
 });
