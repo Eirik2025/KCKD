@@ -1,3 +1,4 @@
+console.log('APP.JS LOADED');
 import { getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
 
 // Auth navbar updater
