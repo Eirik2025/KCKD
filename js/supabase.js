@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
 const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Auth helpers
 async function signUp(email, password) {
@@ -91,7 +91,7 @@ async function deleteDrop(id) {
 }
 
 export { 
-    supabase, signUp, signIn, signOut, 
+    supabaseClient, signUp, signIn, signOut, 
     getDrops, getUpcomingDrops, isAdmin,
     getAllDropsAdmin, updateDrop, createDrop, deleteDrop 
 };

@@ -53,9 +53,15 @@
         window.handleRegister = async () => {
             const email = document.getElementById('regEmail').value;
             const pass = document.getElementById('regPass').value;
-            const { error } = await signUp(email, pass);
-            if (error) alert('Initiation failed: ' + error.message);
-            else alert('Check your email to confirm.');
+            const { data, error } = await signUp(email, pass);
+            
+            if (error) {
+                alert('Initiation failed: ' + error.message);
+            } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+                alert('This email is already initiated. Sign in instead.');
+            } else {
+                alert('Initiation complete. Check your email to confirm.');
+            }
         };
         
         // If already logged in, redirect home
