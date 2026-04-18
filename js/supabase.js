@@ -1,7 +1,8 @@
 const SUPABASE_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
-const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk';
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Use the global supabase object from CDN
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Auth helpers
 async function signUp(email, password) {
@@ -22,7 +23,7 @@ async function getDrops() {
     const { data, error } = await supabase
         .from('drops')
         .select('*')
-        .lte('unlock_at', now)  // Only get unlocked items
+        .lte('unlock_at', now)
         .eq('is_visible', true)
         .order('sort_order');
     
@@ -43,7 +44,6 @@ async function getUpcomingDrops() {
     return data?.[0] || null;
 }
 
-// Check if current user is admin
 async function isAdmin() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return false;
@@ -57,7 +57,6 @@ async function isAdmin() {
     return data?.is_admin || false;
 }
 
-// Admin: Get all drops (including locked)
 async function getAllDropsAdmin() {
     const { data, error } = await supabase
         .from('drops')
@@ -67,7 +66,6 @@ async function getAllDropsAdmin() {
     return data || [];
 }
 
-// Admin: Update drop
 async function updateDrop(id, updates) {
     return await supabase
         .from('drops')
@@ -75,14 +73,12 @@ async function updateDrop(id, updates) {
         .eq('id', id);
 }
 
-// Admin: Create drop
 async function createDrop(drop) {
     return await supabase
         .from('drops')
         .insert([drop]);
 }
 
-// Admin: Delete drop
 async function deleteDrop(id) {
     return await supabase
         .from('drops')
@@ -91,7 +87,7 @@ async function deleteDrop(id) {
 }
 
 export { 
-    supabaseClient as supabase, signUp, signIn, signOut, 
+    supabase, signUp, signIn, signOut, 
     getDrops, getUpcomingDrops, isAdmin,
     getAllDropsAdmin, updateDrop, createDrop, deleteDrop 
 };

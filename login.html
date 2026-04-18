@@ -32,10 +32,10 @@
         <a href="index.html" style="display: block; margin-top: 1.5rem; text-decoration: none; color: var(--text-secondary);">← Return to Site</a>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
     import { signUp, signIn, supabase } from './js/supabase.js';
     
-    // Expose to global scope for HTML onclick attributes
     window.toggleMode = () => {
         const login = document.getElementById('loginForm');
         const reg = document.getElementById('registerForm');
@@ -63,9 +63,9 @@
         }
     };
     
-    // If already logged in, redirect home
     const { data: { user } } = await supabase.auth.getUser();
     if (user) window.location.href = 'index.html';
 </script>
+
 </body>
 </html>
