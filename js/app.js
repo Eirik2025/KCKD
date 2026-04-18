@@ -1,152 +1,70 @@
 console.log('APP.JS LOADED');
-import { getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
 
-async function updateNavbar() {
-    console.log('Checking auth state...');
-    
-    const { data, error } = await supabase.auth.getUser();
-    const user = data?.user;
-    
-    console.log('User result:', user);
-    console.log('Auth error:', error);
-    
-    const authBtn = document.getElementById('authBtn');
-    const adminLink = document.getElementById('adminLink');
-    
-    if (!authBtn) {
-        console.log('No authBtn found');
-        return;
-    }
-    
-    if (user) {
-        console.log('User IS logged in, setting Sign Out');
-        authBtn.textContent = 'Sign Out';
-        authBtn.href = '#';
-        authBtn.onclick = async (e) => {
-            e.preventDefault();
-            await supabase.auth.signOut();
-            location.reload();
-        };
-        
-        if (adminLink) {
-            const admin = await isAdmin();
-            console.log('Admin check result:', admin);
-            adminLink.style.display = admin ? 'inline' : 'none';
-        }
-    } else {
-        console.log('No user found, setting Sign In');
-        authBtn.textContent = 'Sign In';
-        authBtn.href = 'login.html';
-        authBtn.onclick = null;
-        if (adminLink) adminLink.style.display = 'none';
+// Create Supabase client directly - don't import from supabase.js
+const SUPABASE_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function isAdmin() {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return false;
+        const { data } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+        return data?.is_admin || false;
+    } catch (e) {
+        console.error('isAdmin error:', e);
+        return false;
     }
 }
 
-// Content drops
-class ContentDropSystem {
-    constructor() {
-        this.init();
-    }
+async function updateNavbar() {
+    console.log('Checking auth...');
     
-    async init() {
-        await this.loadDrops();
-        this.initCountdown();
-        this.initFlip();
-    }
-    
-    async loadDrops() {
-        const drops = await getDrops();
-        const upcoming = await getUpcomingDrops();
-        this.nextDrop = upcoming;
+    try {
+        const { data, error } = await supabase.auth.getUser();
+        const user = data?.user;
         
-        this.renderFactions(drops.filter(d => d.drop_type === 'faction'));
-        this.renderVault(drops.filter(d => d.drop_type === 'vault'));
-        this.renderTimeline(drops.filter(d => d.drop_type === 'timeline'));
-    }
-    
-    renderFactions(drops) {
-        drops.forEach(drop => {
-            const faction = drop.title.toLowerCase().split(' ')[0];
-            const card = document.querySelector(`.faction-card[data-faction="${faction}"]`);
-            if (card) {
-                const lock = card.querySelector('.faction-lock');
-                if (lock) {
-                    lock.classList.add('unlocked');
-                    lock.innerHTML = '<span class="lock-date">Unlocked</span>';
-                }
-            }
-        });
-    }
-    
-    renderVault(drops) {
-        const grid = document.getElementById('vaultGrid');
-        if (!grid || drops.length === 0) return;
+        console.log('User:', user);
+        console.log('Auth error:', error);
         
-        const html = drops.map(drop => `
-            <div class="vault-slot unlocked" data-id="${drop.id}">
-                <div class="vault-card-back" style="background-image: url('${drop.image_url}'); background-size: cover; filter: blur(${drop.blur_level}px);"></div>
-                <span class="drop-date">${drop.title}</span>
-            </div>
-        `).join('');
+        const authBtn = document.getElementById('authBtn');
+        const adminLink = document.getElementById('adminLink');
         
-        grid.insertAdjacentHTML('beforeend', html);
-    }
-    
-    renderTimeline(drops) {
-        const timeline = document.querySelector('.timeline');
-        if (!timeline || drops.length === 0) return;
-        
-        const html = drops.map(drop => `
-            <div class="timeline-item revealed">
-                <div class="timeline-dot active"></div>
-                <div class="timeline-content">
-                    <span class="timeline-date">${new Date(drop.unlock_at).toLocaleDateString()}</span>
-                    <h4>${drop.title}</h4>
-                    <p>${drop.description}</p>
-                </div>
-            </div>
-        `).join('');
-        
-        const nowItem = timeline.querySelector('.timeline-item');
-        if (nowItem) nowItem.insertAdjacentHTML('afterend', html);
-    }
-    
-    initCountdown() {
-        const el = document.getElementById('countdown');
-        if (!el || !this.nextDrop) {
-            if (el) el.innerHTML = '<p class="countdown">All secrets revealed.</p>';
+        if (!authBtn) {
+            console.log('No authBtn found');
             return;
         }
         
-        const update = () => {
-            const diff = new Date(this.nextDrop.unlock_at) - new Date();
-            if (diff <= 0) { location.reload(); return; }
-            const d = Math.floor(diff / 86400000);
-            const h = Math.floor((diff % 86400000) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
+        if (user) {
+            console.log('Setting Sign Out');
+            authBtn.textContent = 'Sign Out';
+            authBtn.href = '#';
+            authBtn.onclick = async (e) => {
+                e.preventDefault();
+                await supabase.auth.signOut();
+                location.reload();
+            };
             
-            el.innerHTML = `
-                <p class="countdown-label">Next: ${this.nextDrop.title}</p>
-                <div class="countdown-timer">
-                    <span>${d}d</span> <span>${h}h</span> <span>${m}m</span> <span>${s}s</span>
-                </div>
-            `;
-        };
-        
-        update();
-        setInterval(update, 1000);
-    }
-    
-    initFlip() {
-        const heroCard = document.getElementById('heroCard');
-        if (heroCard) heroCard.addEventListener('click', () => heroCard.classList.toggle('flipped'));
+            if (adminLink) {
+                const admin = await isAdmin();
+                console.log('Admin:', admin);
+                adminLink.style.display = admin ? 'inline' : 'none';
+            }
+        } else {
+            console.log('Setting Sign In');
+            authBtn.textContent = 'Sign In';
+            authBtn.href = 'login.html';
+            authBtn.onclick = null;
+            if (adminLink) adminLink.style.display = 'none';
+        }
+    } catch (err) {
+        console.error('Navbar crash:', err);
     }
 }
 
-// Init
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM ready');
     updateNavbar();
-    new ContentDropSystem();
     supabase.auth.onAuthStateChange(() => updateNavbar());
 });
