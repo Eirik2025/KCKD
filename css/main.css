@@ -764,3 +764,24 @@ footer span {
     text-shadow: 0 0 20px var(--card-purple);
     cursor: pointer;
 }
+
+/* Right-side navbar logo/image */
+.nav-logo-right {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.nav-logo-right img {
+    height: 45px;
+    width: auto;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(96, 54, 170, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.nav-logo-right img:hover {
+    transform: scale(1.1);
+}
