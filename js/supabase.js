@@ -91,7 +91,7 @@ async function deleteDrop(id) {
 }
 
 export { 
-    supabaseClient, signUp, signIn, signOut, 
+    supabaseClient as supabase, signUp, signIn, signOut, 
     getDrops, getUpcomingDrops, isAdmin,
     getAllDropsAdmin, updateDrop, createDrop, deleteDrop 
 };
