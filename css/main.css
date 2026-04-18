@@ -753,3 +753,14 @@ footer span {
 .admin-nav .nav-right button {
     text-align: right;
 }
+
+.logo-link {
+    text-decoration: none;
+}
+
+.logo-link:hover .logo,
+.logo-link:hover {
+    color: var(--card-light-purple);
+    text-shadow: 0 0 20px var(--card-purple);
+    cursor: pointer;
+}
