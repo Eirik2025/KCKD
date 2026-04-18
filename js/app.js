@@ -1,20 +1,25 @@
 console.log('APP.JS LOADED');
 import { getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
 
-// Auth navbar updater
 async function updateNavbar() {
-    console.log('Checking auth state...'); // Debug
+    console.log('Checking auth state...');
     
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
+    const user = data?.user;
+    
+    console.log('User result:', user);
+    console.log('Auth error:', error);
+    
     const authBtn = document.getElementById('authBtn');
     const adminLink = document.getElementById('adminLink');
     
-    console.log('User:', user); // Debug - check browser console for this
-    
-    if (!authBtn) return;
+    if (!authBtn) {
+        console.log('No authBtn found');
+        return;
+    }
     
     if (user) {
-        console.log('User is logged in, showing Sign Out'); // Debug
+        console.log('User IS logged in, setting Sign Out');
         authBtn.textContent = 'Sign Out';
         authBtn.href = '#';
         authBtn.onclick = async (e) => {
@@ -25,11 +30,11 @@ async function updateNavbar() {
         
         if (adminLink) {
             const admin = await isAdmin();
-            console.log('Is admin:', admin); // Debug
+            console.log('Admin check result:', admin);
             adminLink.style.display = admin ? 'inline' : 'none';
         }
     } else {
-        console.log('No user, showing Sign In'); // Debug
+        console.log('No user found, setting Sign In');
         authBtn.textContent = 'Sign In';
         authBtn.href = 'login.html';
         authBtn.onclick = null;
