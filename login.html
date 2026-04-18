@@ -28,19 +28,27 @@
                 Already marked? <a onclick="toggleMode()">Sign In</a>
             </div>
         </div>
+
+        <div id="loggedInPanel" style="display: none;">
+    <p style="color: var(--card-beige); margin-bottom: 1rem;">You are already initiated.</p>
+    <p id="loggedInEmail" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;"></p>
+    <button onclick="handleLogout()" class="btn-delete" style="width: 100%; background: var(--lava);">Sign Out</button>
+        </div>
         
         <a href="index.html" style="display: block; margin-top: 1.5rem; text-decoration: none; color: var(--text-secondary);">← Return to Site</a>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module">
-    import { signUp, signIn, supabase } from './js/supabase.js';
+    import { signUp, signIn, signOut, supabase } from './js/supabase.js';
     
     window.toggleMode = () => {
         const login = document.getElementById('loginForm');
         const reg = document.getElementById('registerForm');
+        const loggedIn = document.getElementById('loggedInPanel');
         login.style.display = login.style.display === 'none' ? 'block' : 'none';
         reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+        if (loggedIn) loggedIn.style.display = 'none';
     };
     
     window.handleLogin = async () => {
@@ -63,8 +71,19 @@
         }
     };
     
+    window.handleLogout = async () => {
+        await signOut();
+        location.reload();
+    };
+    
+    // Check if already logged in
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) window.location.href = 'index.html';
+    if (user) {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loggedInPanel').style.display = 'block';
+        document.getElementById('loggedInEmail').textContent = user.email;
+    }
 </script>
 
 </body>

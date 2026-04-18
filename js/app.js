@@ -1,17 +1,19 @@
 import { getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
 
-// Auth navbar updater
 async function updateNavbar() {
     const { data: { user } } = await supabase.auth.getUser();
     const authBtn = document.getElementById('authBtn');
     const adminLink = document.getElementById('adminLink');
     
-    if (!authBtn) return; // Not all pages have auth btn
+    if (!authBtn) return;
     
     if (user) {
-        authBtn.textContent = 'Account';
+        authBtn.textContent = 'Sign Out';
         authBtn.href = '#';
-        authBtn.onclick = () => { window.location.href = 'login.html'; return false; };
+        authBtn.onclick = async () => {
+            await supabase.auth.signOut();
+            location.reload();
+        };
         
         if (adminLink) {
             const admin = await isAdmin();
@@ -24,7 +26,6 @@ async function updateNavbar() {
         if (adminLink) adminLink.style.display = 'none';
     }
 }
-
 // Content drops
 class ContentDropSystem {
     constructor() {
