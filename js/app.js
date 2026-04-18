@@ -1,82 +1,31 @@
-import { signUp, signIn, signOut, getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
+import { getDrops, getUpcomingDrops, isAdmin, supabase } from './supabase.js';
 
-// ========== AUTH UI ==========
-function openAuth() {
-    document.getElementById('authModal').style.display = 'block';
-    checkAuthState();
-}
-
-function closeAuth() {
-    document.getElementById('authModal').style.display = 'none';
-}
-
-function toggleAuthMode() {
-    const login = document.getElementById('loginForm');
-    const reg = document.getElementById('registerForm');
-    login.style.display = login.style.display === 'none' ? 'block' : 'none';
-    reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
-}
-
-async function handleRegister() {
-    const email = document.getElementById('regEmail').value;
-    const pass = document.getElementById('regPass').value;
-    const { error } = await signUp(email, pass);
-    if (error) alert('Initiation failed: ' + error.message);
-    else alert('Check your email to confirm initiation.');
-}
-
-async function handleLogin() {
-    const email = document.getElementById('authEmail').value;
-    const pass = document.getElementById('authPass').value;
-    const { error } = await signIn(email, pass);
-    if (error) alert('Access denied: ' + error.message);
-    else {
-        closeAuth();
-        updateNavbar();
-    }
-}
-
-async function handleLogout() {
-    await signOut();
-    updateNavbar();
-    openAuth();
-}
-
-async function checkAuthState() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-        document.getElementById('authForms').style.display = 'none';
-        document.getElementById('userPanel').style.display = 'block';
-        document.getElementById('userEmail').textContent = user.email;
-    } else {
-        document.getElementById('authForms').style.display = 'block';
-        document.getElementById('userPanel').style.display = 'none';
-    }
-}
-
+// Auth navbar updater
 async function updateNavbar() {
     const { data: { user } } = await supabase.auth.getUser();
     const authBtn = document.getElementById('authBtn');
     const adminLink = document.getElementById('adminLink');
     
+    if (!authBtn) return; // Not all pages have auth btn
+    
     if (user) {
         authBtn.textContent = 'Account';
-        authBtn.onclick = () => { openAuth(); return false; };
+        authBtn.href = '#';
+        authBtn.onclick = () => { window.location.href = 'login.html'; return false; };
         
-        const admin = await isAdmin();
-        if (admin) {
-            adminLink.style.display = 'inline';
-        } else {
-            adminLink.style.display = 'none';
+        if (adminLink) {
+            const admin = await isAdmin();
+            adminLink.style.display = admin ? 'inline' : 'none';
         }
     } else {
         authBtn.textContent = 'Sign In';
-        authBtn.onclick = () => { openAuth(); return false; };
-        adminLink.style.display = 'none';
+        authBtn.href = 'login.html';
+        authBtn.onclick = null;
+        if (adminLink) adminLink.style.display = 'none';
     }
 }
 
-// ========== CONTENT DROPS ==========
+// Content drops
 class ContentDropSystem {
     constructor() {
         this.init();
@@ -84,18 +33,18 @@ class ContentDropSystem {
     
     async init() {
         await this.loadDrops();
-        await this.initCountdown();
+        this.initCountdown();
         this.initFlip();
     }
     
     async loadDrops() {
         const drops = await getDrops();
         const upcoming = await getUpcomingDrops();
+        this.nextDrop = upcoming;
         
         this.renderFactions(drops.filter(d => d.drop_type === 'faction'));
         this.renderVault(drops.filter(d => d.drop_type === 'vault'));
         this.renderTimeline(drops.filter(d => d.drop_type === 'timeline'));
-        this.nextDrop = upcoming;
     }
     
     renderFactions(drops) {
@@ -116,21 +65,21 @@ class ContentDropSystem {
         const grid = document.getElementById('vaultGrid');
         if (!grid || drops.length === 0) return;
         
-        const unlockedHTML = drops.map(drop => `
+        const html = drops.map(drop => `
             <div class="vault-slot unlocked" data-id="${drop.id}">
                 <div class="vault-card-back" style="background-image: url('${drop.image_url}'); background-size: cover; filter: blur(${drop.blur_level}px);"></div>
                 <span class="drop-date">${drop.title}</span>
             </div>
         `).join('');
         
-        grid.insertAdjacentHTML('beforeend', unlockedHTML);
+        grid.insertAdjacentHTML('beforeend', html);
     }
     
     renderTimeline(drops) {
         const timeline = document.querySelector('.timeline');
         if (!timeline || drops.length === 0) return;
         
-        const items = drops.map(drop => `
+        const html = drops.map(drop => `
             <div class="timeline-item revealed">
                 <div class="timeline-dot active"></div>
                 <div class="timeline-content">
@@ -142,24 +91,19 @@ class ContentDropSystem {
         `).join('');
         
         const nowItem = timeline.querySelector('.timeline-item');
-        if (nowItem) nowItem.insertAdjacentHTML('afterend', items);
+        if (nowItem) nowItem.insertAdjacentHTML('afterend', html);
     }
     
-    async initCountdown() {
+    initCountdown() {
         const el = document.getElementById('countdown');
-        if (!el) return;
-        
-        if (!this.nextDrop) {
-            el.innerHTML = '<p class="countdown">All secrets revealed.</p>';
+        if (!el || !this.nextDrop) {
+            if (el) el.innerHTML = '<p class="countdown">All secrets revealed.</p>';
             return;
         }
         
         const update = () => {
             const diff = new Date(this.nextDrop.unlock_at) - new Date();
-            if (diff <= 0) {
-                location.reload();
-                return;
-            }
+            if (diff <= 0) { location.reload(); return; }
             const d = Math.floor(diff / 86400000);
             const h = Math.floor((diff % 86400000) / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
@@ -179,22 +123,13 @@ class ContentDropSystem {
     
     initFlip() {
         const heroCard = document.getElementById('heroCard');
-        if (heroCard) {
-            heroCard.addEventListener('click', () => heroCard.classList.toggle('flipped'));
-        }
+        if (heroCard) heroCard.addEventListener('click', () => heroCard.classList.toggle('flipped'));
     }
 }
 
-// ========== INIT ==========
+// Init
 document.addEventListener('DOMContentLoaded', () => {
     updateNavbar();
     new ContentDropSystem();
-    
-    // Close modal on outside click
-    window.onclick = (e) => {
-        if (e.target === document.getElementById('authModal')) closeAuth();
-    };
-    
-    // Auth state listener
     supabase.auth.onAuthStateChange(() => updateNavbar());
 });

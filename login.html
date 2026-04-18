@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter the Shadows - K&D</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="auth-page">
+    <div class="auth-box">
+        <h2 class="font-display">Kloak & Daggurrs</h2>
+        <p>Authentication required.</p>
+        
+        <div id="loginForm">
+            <input type="email" id="authEmail" placeholder="Email">
+            <input type="password" id="authPass" placeholder="Password">
+            <button onclick="handleLogin()">Sign In</button>
+            <div class="auth-toggle">
+                Not initiated? <a onclick="toggleMode()">Join the ranks</a>
+            </div>
+        </div>
+        
+        <div id="registerForm" style="display: none;">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPass" placeholder="Password">
+            <button onclick="handleRegister()">Sign Up</button>
+            <div class="auth-toggle">
+                Already marked? <a onclick="toggleMode()">Sign In</a>
+            </div>
+        </div>
+        
+        <a href="index.html" style="display: block; margin-top: 1.5rem; text-decoration: none; color: var(--text-secondary);">← Return to Site</a>
+    </div>
+
+    <script type="module">
+        import { signUp, signIn, supabase } from './js/supabase.js';
+        
+        window.toggleMode = () => {
+            const login = document.getElementById('loginForm');
+            const reg = document.getElementById('registerForm');
+            login.style.display = login.style.display === 'none' ? 'block' : 'none';
+            reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+        };
+        
+        window.handleLogin = async () => {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            const { error } = await signIn(email, pass);
+            if (error) alert('Access denied: ' + error.message);
+            else window.location.href = 'index.html';
+        };
+        
+        window.handleRegister = async () => {
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const { error } = await signUp(email, pass);
+            if (error) alert('Initiation failed: ' + error.message);
+            else alert('Check your email to confirm.');
+        };
+        
+        // If already logged in, redirect home
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

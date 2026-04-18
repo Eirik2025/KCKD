@@ -627,38 +627,6 @@ footer span {
     animation: pulse-lock 2s infinite;
 }
 
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background: var(--bg-secondary);
-    margin: 10% auto;
-    padding: 2rem;
-    border: 2px solid var(--accent);
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-}
-
-.close-btn {
-    position: absolute;
-    right: 1rem;
-    top: 0.5rem;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--card-beige);
-}
 
 #authForms input, #userPanel p {
     margin-bottom: 1rem;
@@ -685,4 +653,103 @@ footer span {
 @keyframes pulse-red {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
+}
+
+/* Remove these old modal styles completely */
+/* .modal, .modal-content, .close-btn — DELETE THEM */
+
+/* Page Layout */
+.page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h2 {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: var(--card-lavender);
+    text-shadow: 0 0 20px var(--card-purple);
+}
+
+/* Nav active state */
+.nav-links a.active {
+    color: var(--card-light-purple);
+    border-bottom: 2px solid var(--card-light-purple);
+}
+
+/* Auth Page */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 2.5rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.auth-box h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--card-lavender);
+    margin-bottom: 0.5rem;
+}
+
+.auth-box p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.auth-box input {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.auth-box button {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.auth-box a {
+    color: var(--card-light-purple);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.auth-toggle {
+    margin-top: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Admin Nav Layout */
+.admin-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.admin-nav .nav-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.admin-nav .nav-right a,
+.admin-nav .nav-right button {
+    text-align: right;
 }

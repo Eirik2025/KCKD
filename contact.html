@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request an Audience - K&D</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo font-display">Kloak & Daggurrs</div>
+        <div class="nav-links">
+            <a href="factions.html">Factions</a>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html" class="active">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h2>Request an Audience</h2>
+            <p style="color: var(--text-secondary);">What do you seek?</p>
+        </div>
+        <form id="deckRequestForm" style="max-width: 600px; margin: 0 auto;">
+            <input type="email" placeholder="Your email" required>
+            <select>
+                <option>Select Interest</option>
+                <option>Deck Pre-Order</option>
+                <option>Playtesting</option>
+                <option>Wholesale</option>
+                <option>Other</option>
+            </select>
+            <textarea placeholder="Details..." required></textarea>
+            <button type="submit">Send Request</button>
+        </form>
+    </main>
+
+    <footer>
+        <p class="font-display">Kloak & Daggurrs</p>
+        <span>All secrets have a price.</span>
+    </footer>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -5,57 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kloak & Daggurrs: Klandestine</title>
     <link rel="stylesheet" href="css/main.css">
-    <script src=""https://cdn.jsdelivr.net/npm/@supabase-js@2"></script>
 </head>
-<!-- Auth Modal -->
-<div id="authModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeAuth()">&times;</span>
-        <div id="authForms">
-            <div id="loginForm">
-                <h3 class="font-display">Enter the Shadows</h3>
-                <input type="email" id="authEmail" placeholder="Email">
-                <input type="password" id="authPass" placeholder="Password">
-                <button onclick="handleLogin()">Sign In</button>
-                <p>Not initiated? <a onclick="toggleAuthMode()">Join the ranks</a></p>
-            </div>
-            <div id="registerForm" style="display: none;">
-                <h3 class="font-display">Join the Ranks</h3>
-                <input type="email" id="regEmail" placeholder="Email">
-                <input type="password" id="regPass" placeholder="Password">
-                <button onclick="handleRegister()">Sign Up</button>
-                <p>Already marked? <a onclick="toggleAuthMode()">Sign In</a></p>
-            </div>
-        </div>
-        <div id="userPanel" style="display: none;">
-            <h3 class="font-display">Welcome, Operative</h3>
-            <p id="userEmail"></p>
-            <button onclick="handleLogout()">Sign Out</button>
-        </div>
-    </div>
-</div>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="logo font-display">Kloak & Daggurrs</div>
         <div class="nav-links">
-            <a href="#factions">Factions</a>
-            <a href="#gallery">Vault</a>
-            <a href="#roadmap">Whispers</a>
-            <a href="#qa">Q&A</a>
-            <a href="#contact">Contact</a>
+            <a href="factions.html">Factions</a>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html">Contact</a>
             <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
-            <a href="#" id="authBtn" class="btn-login" onclick="openAuth(); return false;">Sign In</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
     </nav>
-    <nav class="navbar">
-        <div class="logo font-display">K&D Control</div>
-        <div class="nav-links">
-            <a href="index.html">Back to Site</a>
-            <button onclick="signOutUser()" class="btn-login">Sign Out</button>
-        </div>
-    </nav>
-    <!-- Hero (Done) -->
+
     <header class="hero">
         <div class="hero-content">
             <div class="hero-text">
@@ -82,124 +46,13 @@
         </div>
     </header>
 
-    <!-- Factions Section (Always Visible Teaser) -->
-    <section id="factions" class="factions">
-        <h3 class="font-display section-title">The Thirteen Shadows</h3>
-        <div class="faction-grid">
-            <div class="faction-card" data-faction="chaos">
-                <div class="faction-sigil"></div>
-                <span class="faction-name">Chaos</span>
-                <div class="faction-lock locked" data-unlock="2026-05-01">
-                    <span class="lock-date">Sealed until May 1st</span>
-                </div>
-            </div>
-            <div class="faction-card" data-faction="earth">
-                <div class="faction-sigil"></div>
-                <span class="faction-name">Earth</span>
-                <div class="faction-lock locked" data-unlock="2026-05-15">
-                    <span class="lock-date">Sealed until May 15th</span>
-                </div>
-            </div>
-            <div class="faction-card" data-faction="fairy">
-                <div class="faction-sigil"></div>
-                <span class="faction-name">Fairy</span>
-                <div class="faction-lock locked" data-unlock="2026-06-01">
-                    <span class="lock-date">Sealed until June 1st</span>
-                </div>
-            </div>
-            <!-- Add remaining 10 factions -->
-            <div class="faction-card locked-faction" data-faction="mystery">
-                <div class="faction-sigil unknown"></div>
-                <span class="faction-name">???</span>
-                <div class="faction-lock locked">
-                    <span class="lock-date">Unknown</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Card Vault (Time-Gated Gallery) -->
-    <section id="gallery" class="vault">
-        <h3 class="font-display section-title">The Vault</h3>
-        <div class="vault-grid" id="vaultGrid">
-            <!-- Cards injected by JS based on date -->
-            <div class="vault-slot locked" data-drop="2026-04-20">
-                <div class="vault-card-back"></div>
-                <span class="drop-date">Drops April 20</span>
-            </div>
-            <div class="vault-slot locked" data-drop="2026-05-01">
-                <div class="vault-card-back"></div>
-                <span class="drop-date">Drops May 1</span>
-            </div>
-            <div class="vault-slot locked" data-drop="2026-05-20">
-                <div class="vault-card-back"></div>
-                <span class="drop-date">Drops May 20</span>
-            </div>
-            <div class="vault-slot locked" data-drop="2026-06-15">
-                <div class="vault-card-back"></div>
-                <span class="drop-date">Drops June 15</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Roadmap / Whisper Timeline -->
-    <section id="roadmap" class="roadmap">
-        <h3 class="font-display section-title">Whispers & Warnings</h3>
-        <div class="timeline">
-            <div class="timeline-item revealed">
-                <div class="timeline-dot active"></div>
-                <div class="timeline-content">
-                    <span class="timeline-date">Now</span>
-                    <h4>The Veil Lifts</h4>
-                    <p>The first shadow emerges. Watch closely.</p>
-                </div>
-            </div>
-            <div class="timeline-item" data-reveal="2026-05-01">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content locked">
-                    <span class="timeline-date">???</span>
-                    <h4>Redacted</h4>
-                    <p>[This knowledge remains sealed]</p>
-                </div>
-            </div>
-            <div class="timeline-item" data-reveal="2026-06-01">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content locked">
-                    <span class="timeline-date">???</span>
-                    <h4>Redacted</h4>
-                    <p>[This knowledge remains sealed]</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Q&A Preview -->
-    <section id="qa" class="qa-section">
-        <h3 class="font-display section-title">Questions & Secrets</h3>
-        <div class="qa-list" id="qaList">
-            <div class="qa-item">
-                <span class="qa-q">What is Klandestine?</span>
-                <span class="qa-a">A battle of shadows, secrets, and stolen power.</span>
-            </div>
-        </div>
-        <a href="qa.html" class="btn-link">Ask Your Own</a>
-    </section>
-
-    <!-- Contact / Deck Request -->
-    <section id="contact" class="contact-section">
-        <h3 class="font-display section-title">Request an Audience</h3>
-        <form id="deckRequestForm">
-            <input type="email" placeholder="Your email" required>
-            <select>
-                <option>Select Interest</option>
-                <option>Deck Pre-Order</option>
-                <option>Playtesting</option>
-                <option>Wholesale</option>
-                <option>Other</option>
-            </select>
-            <textarea placeholder="What do you seek?" required></textarea>
-            <button type="submit">Send Request</button>
-        </form>
+    <section style="text-align: center; padding: 4rem 2rem;">
+        <h3 class="font-display" style="font-size: 2rem; color: var(--card-beige);">The veil is thin.</h3>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 1rem auto;">
+            Thirteen factions wage a silent war. Their weapons are not steel, but secrets. 
+            Explore the shadows. The vault awaits.
+        </p>
+        <a href="vault.html" class="btn-link" style="margin-top: 1rem; display: inline-block;">Enter the Vault</a>
     </section>
 
     <footer>
