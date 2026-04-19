@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kloak & Daggurrs: Klandestine</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -16,7 +19,13 @@
     <img src="assets/logo-icon.png" alt="K&D">
 </a>
         <div class="nav-links">
-            <a href="factions.html">Factions</a>
+            <div class="dropdown">
+    <a href="factions.html">Factions</a>
+    <div class="dropdown-content">
+        <a href="set-fehu.html">Fehu</a>
+        <a href="set-godrin.html">Coming Soon</a>
+    </div>
+</div>
             <a href="vault.html">Vault</a>
             <a href="whispers.html">Whispers</a>
             <a href="qa.html">Q&A</a>

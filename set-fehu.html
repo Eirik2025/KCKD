@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fehu - Kloak & Daggurrs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body data-set="fehu">
+    <nav class="navbar">
+        <a href="index.html" class="logo-link">
+            <div class="logo font-display">Kloak & Daggurrs</div>
+        </a>
+        <a href="index.html" class="nav-logo-right">
+            <img src="assets/logo-icon.png" alt="K&D">
+        </a>
+        <div class="nav-links">
+            <div class="dropdown">
+    <a href="factions.html">Factions</a>
+    <div class="dropdown-content">
+        <a href="set-fehu.html">Fehu</a>
+        <a href="set-godrin.html">Coming Soon</a>
+    </div>
+    </div>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
+        </div>
+    </nav>
+
+    <header class="set-hero">
+        <h1 class="set-title">Fehu</h1>
+        <p class="set-tagline">Wealth is not measured in gold, but in what you are willing to sacrifice.</p>
+        <div class="set-progress" id="fehuProgress">0/120 Uncovered</div>
+    </header>
+
+    <main class="page-content">
+        <!-- Story -->
+        <section style="margin-bottom: 5rem;">
+            <h2 class="section-title">The First Cattle</h2>
+            <div class="story-text">
+                <p>The runes were old when the mountains were young. Fehu speaks of cattle, of mobile wealth, of the blood price that must be paid before any contract is sealed. Those who bear the mark of Fehu do not hoard—they trade, they bleed, they bind.</p>
+                
+                <p>In the frozen reaches north of the Spirit Gates, the Godrin once tried to claim Fehu's power for their cathedral vaults. They returned with empty hands and frozen hearts. The runes do not serve. They demand.</p>
+                
+                <p>Now the collectors come. Not for gold, but for the binding. Each card is a thread. Each thread is a debt. And debts, like runes, outlive the hands that carve them.</p>
+            </div>
+        </section>
+
+        <!-- Collection Grid -->
+        <section>
+            <h2 class="section-title">The Hoard</h2>
+            <div class="collection-grid" id="fehuGrid">
+                <!-- Example placeholders showing all rarities -->
+                <div class="vault-slot rarity-common">
+                    <div class="vault-card-back"></div>
+                    <span class="drop-date">#001 Common</span>
+                </div>
+                <div class="vault-slot rarity-uncommon">
+                    <div class="vault-card-back"></div>
+                    <span class="drop-date">#002 Uncommon</span>
+                </div>
+                <div class="vault-slot rarity-rare">
+                    <div class="vault-card-back"></div>
+                    <span class="drop-date">#003 Rare</span>
+                </div>
+                <div class="vault-slot rarity-mythic">
+                    <div class="vault-card-back"></div>
+                    <span class="drop-date">#004 Mythic</span>
+                </div>
+                <div class="vault-slot rarity-gold">
+                    <div class="vault-card-back"></div>
+                    <span class="drop-date">#005 Gold</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p class="font-display">Kloak & Daggurrs</p>
+        <span>All secrets have a price.</span>
+    </footer>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
