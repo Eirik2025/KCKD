@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Godrin - Kloak & Daggurrs</title>
+    <title>braided - Kloak & Daggurrs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body data-set="godrin">
+<body data-set="braided">
     
     <div class="admin-preview-badge" id="adminPreviewBadge">ADMIN PREVIEW</div>
 
@@ -21,41 +21,42 @@
         <a href="index.html" class="nav-logo-right">
             <img src="assets/logo-icon.png" alt="K&D">
         </a>
-                <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+        <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
         <div class="nav-links" id="navLinks">
             <div class="dropdown">
-                <a href="html/factions.html">Factions</a>
+                <a href="factions.html">Factions</a>
                 <div class="dropdown-content">
-                    <a href="html/">Fehu</a>
-                    <a href="html/set-godrin.html">Coming Soon</a>
+                    <a href="set-fehu.html">Fehu</a>
+                    <a href="set-godrin.html">Coming Soon</a>
+                    <a href="set-braided.html">Coming Soon</a>
                 </div>
             </div>
-            <a href="html/vault.html">Vault</a>
-            <a href="html/whispers.html">Whispers</a>
-            <a href="html/qa.html">Q&A</a>
-            <a href="html/contact.html">Contact</a>
-            <a href="html/admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
-            <a href="html/login.html" id="authBtn" class="btn-login">Sign In</a>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
     </nav>
 
     <!-- LOCKED VIEW (Default) -->
-    <div class="godrin-locked-view" id="godrinLocked">
+    <div class="braided-locked-view" id="braidedLocked">
         <div class="seal-sigil"><span>&#10067;</span></div>
-        <h1 class="godrin-locked-title">Godrin</h1>
-        <div class="godrin-lock-timer" id="godrinTimer">Calculating...</div>
-        <div class="godrin-lock-date" id="godrinLockDate">Sealed until further notice</div>
+        <h1 class="braided-locked-title">braided</h1>
+        <div class="braided-lock-timer" id="braidedTimer">Calculating...</div>
+        <div class="braided-lock-date" id="braidedLockDate">Sealed until further notice</div>
     </div>
 
     <!-- TEASER VIEW (Preview/Coming Soon) -->
-    <div class="godrin-teaser-view" id="godrinTeaser" style="display: none;">
+    <div class="braided-teaser-view" id="braidedTeaser" style="display: none;">
         <div class="teaser-content">
             <div class="seal-sigil" style="border-color: var(--sun); animation: pulse-gold 2s infinite;">
                 <span style="color: var(--sun);">&#9733;</span>
             </div>
-            <h1 class="godrin-locked-title" style="color: var(--sun); opacity: 0.6; filter: blur(1px);">Godrin</h1>
+            <h1 class="braided-locked-title" style="color: var(--sun); opacity: 0.6; filter: blur(1px);">braided</h1>
             <p class="teaser-text">Something stirs in the cathedral...</p>
-            <div class="godrin-lock-timer" id="godrinTeaserTimer">Arriving soon</div>
+            <div class="braided-lock-timer" id="braidedTeaserTimer">Arriving soon</div>
             <div class="teaser-progress">
                 <div class="progress-bar" id="teaserProgress"></div>
             </div>
@@ -63,18 +64,18 @@
     </div>
 
     <!-- UNLOCKED VIEW (Admin or Post-Drop) -->
-    <div class="godrin-unlocked-view" id="godrinUnlocked">
+    <div class="braided-unlocked-view" id="braidedUnlocked">
         <header class="set-hero">
-            <h1 class="set-title">Godrin</h1>
+            <h1 class="set-title">braided</h1>
             <p class="set-tagline">The throne does not empty. It simply waits for a worthier claim.</p>
-            <div class="set-progress" id="godrinProgress">0/120 Uncovered</div>
+            <div class="set-progress" id="braidedProgress">0/120 Uncovered</div>
         </header>
 
         <main class="page-content">
             <section style="margin-bottom: 5rem;">
                 <h2 class="section-title">The Empty Throne</h2>
                 <div class="story-text">
-                    <p>They say the Godrin built their cathedral in a single night, not with stone but with oaths. Every pillar is a promise. Every window, a vow. To stand inside is to feel the weight of every believer who ever knelt.</p>
+                    <p>They say the braided built their cathedral in a single night, not with stone but with oaths. Every pillar is a promise. Every window, a vow. To stand inside is to feel the weight of every believer who ever knelt.</p>
                     
                     <p>But the throne sits empty. Has sat empty for three hundred years. Not because no one has tried to claim it—because the seat itself refuses the unworthy.</p>
                     
@@ -84,7 +85,7 @@
 
             <section>
                 <h2 class="section-title">The Hoard</h2>
-                <div class="collection-grid" id="godrinGrid">
+                <div class="collection-grid" id="braidedGrid">
                     <div class="vault-slot rarity-common">
                         <div class="vault-card-back"></div>
                         <span class="drop-date">#001 Common</span>
@@ -121,24 +122,24 @@
         const SB_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk';
 
-        // REPLACE the initGodrin function in set-godrin.html:
-        async function initGodrin() {
+        // REPLACE the initbraided function in set-braided.html:
+        async function initbraided() {
             const client = supabase || window.supabase.createClient(SB_URL, SB_KEY);
             const now = new Date(); // UTC now
             
-            // Get Godrin drop from database
+            // Get braided drop from database
             const { data: drop, error } = await client
                 .from('drops')
                 .select('*')
                 .eq('drop_type', 'page')
-                .ilike('title', '%godrin%')
+                .ilike('title', '%braided%')
                 .single();
 
             if (error) {
-                console.error('Error fetching Godrin drop:', error);
+                console.error('Error fetching braided drop:', error);
             }
 
-            console.log('Godrin drop data:', drop); // Debug
+            console.log('braided drop data:', drop); // Debug
             console.log('Current time (UTC):', now.toISOString());
 
             let teaserAt = drop?.teaser_at ? new Date(drop.teaser_at) : null;
@@ -166,28 +167,28 @@
             console.log('Current state:', state); // Debug
 
             // Hide all views first
-            document.getElementById('godrinLocked').style.display = 'none';
-            document.getElementById('godrinTeaser').style.display = 'none';
-            document.getElementById('godrinUnlocked').style.display = 'none';
+            document.getElementById('braidedLocked').style.display = 'none';
+            document.getElementById('braidedTeaser').style.display = 'none';
+            document.getElementById('braidedUnlocked').style.display = 'none';
 
             // Show appropriate view
             if (state === 'unlocked') {
-                document.getElementById('godrinUnlocked').style.display = 'block';
+                document.getElementById('braidedUnlocked').style.display = 'block';
                 if (isAdminUser && unlockAt && now < unlockAt) {
                     document.getElementById('adminPreviewBadge').style.display = 'block';
                 }
             } else if (state === 'teaser') {
-                document.getElementById('godrinTeaser').style.display = 'flex';
+                document.getElementById('braidedTeaser').style.display = 'flex';
                 startTeaserCountdown(unlockAt);
             } else {
-                document.getElementById('godrinLocked').style.display = 'flex';
+                document.getElementById('braidedLocked').style.display = 'flex';
                 startLockedCountdown(teaserAt || unlockAt);
             }
         }
 
         function startLockedCountdown(target) {
-            const el = document.getElementById('godrinTimer');
-            const dateEl = document.getElementById('godrinLockDate');
+            const el = document.getElementById('braidedTimer');
+            const dateEl = document.getElementById('braidedLockDate');
             
             if (!target) {
                 el.textContent = 'Coming Soon';
@@ -218,7 +219,7 @@
         }
 
         function startTeaserCountdown(target) {
-            const el = document.getElementById('godrinTeaserTimer');
+            const el = document.getElementById('braidedTeaserTimer');
             const progress = document.getElementById('teaserProgress');
             
             if (!target) return;
@@ -248,7 +249,7 @@
             document.getElementById('navLinks').classList.toggle('active');
         };
 
-        initGodrin();
+        initbraided();
     </script>
     <script type="module" src="js/app.js"></script>
 </body>

@@ -1430,3 +1430,47 @@ footer {
         padding: 0;
     }
 }
+
+/* ========== TEASER VIEW ========== */
+.godrin-teaser-view {
+    display: none;
+    min-height: 70vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.teaser-content {
+    padding: 3rem;
+    border: 1px solid var(--sun);
+    border-radius: 16px;
+    background: rgba(255, 215, 0, 0.05);
+    max-width: 500px;
+    width: 90%;
+}
+
+.teaser-text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 1.2rem;
+    color: var(--card-beige);
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+.teaser-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 2px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--sun);
+    border-radius: 2px;
+    transition: width 1s ease;
+    width: 0%;
+}

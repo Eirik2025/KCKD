@@ -20,12 +20,14 @@
         .status-locked { background: var(--lava); }
         .status-unlocked { background: var(--fungus); }
         .status-hidden { background: var(--spirit); }
+        .status-teaser { background: var(--sun); color: black; }
         .loading { color: var(--text-secondary); font-style: italic; }
         .error { color: var(--lava); }
+        .timezone-note { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem; font-style: italic; }
+        .date-display { color: var(--card-beige); font-size: 0.9rem; margin-top: 0.25rem; }
     </style>
 </head>
 <body>
-    <!-- Admin Nav -->
     <nav class="navbar admin-nav">
         <a href="index.html" class="logo-link">
             <div class="logo font-display">K&D Control</div>
@@ -88,8 +90,17 @@
                         <option value="vault">Vault Card</option>
                         <option value="timeline">Timeline Event</option>
                         <option value="hero">Hero Section</option>
+                        <option value="page">Page Release</option>
                     </select>
-                    <input type="datetime-local" id="newDate">
+                    <div style="grid-column: span 2;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem;">Teaser Date (CST) - When preview appears:</label>
+                        <input type="datetime-local" id="newTeaserDate">
+                        <div class="timezone-note">All times are Central Standard Time (Iowa)</div>
+                    </div>
+                    <div style="grid-column: span 2;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem;">Official Drop Date (CST) - When fully unlocked:</label>
+                        <input type="datetime-local" id="newDropDate">
+                    </div>
                     <input type="text" id="newImage" placeholder="Image path" value="assets/cards/card-back.png">
                     <input type="number" id="newBlur" placeholder="Blur px" value="8">
                     <input type="number" id="newOrder" placeholder="Sort Order" value="0">
@@ -104,41 +115,18 @@
     </div>
 
     <script type="module">
-        import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase } from './js/supabase.js';
+        import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase, formatForDateTimeLocal, formatDisplayDate, nowInCST } from './js/supabase.js';
 
         async function checkAuth() {
             try {
-                // First check if we have a session
                 const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                 
-                if (sessionError) {
-                    console.error('Session error:', sessionError);
+                if (sessionError || !session) {
                     showLogin();
                     return;
                 }
 
-                // If no session, show login
-                if (!session) {
-                    console.log('No session found');
-                    showLogin();
-                    return;
-                }
-
-                console.log('Session found:', session.user.email);
-                
-                // We have a session, now check if user is admin
-                const { data: { user } } = await supabase.auth.getUser();
-                
-                if (!user) {
-                    console.log('No user data');
-                    showLogin();
-                    return;
-                }
-
-                // Check admin status
                 const admin = await isAdmin();
-                console.log('Admin check result:', admin);
-
                 if (admin) {
                     showAdminPanel();
                     loadDrops();
@@ -156,8 +144,6 @@
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('accessDenied').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminStatus').textContent = 'Checking access...';
-            document.getElementById('adminStatus').className = 'loading';
         }
 
         function showLogin() {
@@ -183,7 +169,6 @@
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminStatus').innerHTML = '<span style="color: var(--fungus)">Access Granted</span>';
             
-            // Update navbar auth button
             const authBtn = document.getElementById('authBtn');
             if (authBtn) {
                 authBtn.textContent = 'Sign Out';
@@ -199,18 +184,26 @@
         window.signInUser = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
-            
             showLoading();
-            
             const { error } = await signIn(email, pass);
             if (error) {
                 alert('Access denied: ' + error.message);
                 showLogin();
             } else {
-                // Recheck auth after sign in
                 await checkAuth();
             }
         };
+
+        function getStatus(drop) {
+            const now = nowInCST();
+            const teaser = new Date(drop.teaser_at);
+            const unlock = new Date(drop.unlock_at);
+            
+            if (!drop.is_visible) return { text: 'HIDDEN', class: 'status-hidden' };
+            if (now >= unlock) return { text: 'UNLOCKED', class: 'status-unlocked' };
+            if (now >= teaser) return { text: 'TEASER', class: 'status-teaser' };
+            return { text: 'LOCKED', class: 'status-locked' };
+        }
 
         async function loadDrops() {
             const drops = await getAllDropsAdmin();
@@ -222,14 +215,13 @@
             }
             
             container.innerHTML = drops.map(drop => {
-                const isLocked = new Date(drop.unlock_at) > new Date();
-                const statusText = !drop.is_visible ? 'HIDDEN' : (isLocked ? 'LOCKED' : 'UNLOCKED');
-                const badgeClass = !drop.is_visible ? 'status-hidden' : (isLocked ? 'status-locked' : 'status-unlocked');
+                const status = getStatus(drop);
+                const now = new Date();
                 
                 return `
                 <div class="drop-card" data-id="${drop.id}">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                        <h4 class="font-display">${drop.title} <span class="status-badge ${badgeClass}">${statusText}</span></h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h4 class="font-display">${drop.title} <span class="status-badge ${status.class}">${status.text}</span></h4>
                         <button onclick="deleteThis('${drop.id}')" class="btn-delete">Delete</button>
                     </div>
                     <div class="form-grid">
@@ -239,8 +231,18 @@
                             <option value="vault" ${drop.drop_type === 'vault' ? 'selected' : ''}>Vault</option>
                             <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
                             <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
+                            <option value="page" ${drop.drop_type === 'page' ? 'selected' : ''}>Page Release</option>
                         </select>
-                        <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? drop.unlock_at.slice(0, 16) : ''}">
+                        <div style="grid-column: span 2;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Teaser Date (CST):</label>
+                            <input type="datetime-local" class="edit-teaser" value="${drop.teaser_at ? formatForDateTimeLocal(new Date(drop.teaser_at)) : ''}">
+                            <div class="date-display">Current: ${drop.teaser_at ? formatDisplayDate(drop.teaser_at) : 'Not set'}</div>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Official Drop Date (CST):</label>
+                            <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? formatForDateTimeLocal(new Date(drop.unlock_at)) : ''}">
+                            <div class="date-display">Current: ${drop.unlock_at ? formatDisplayDate(drop.unlock_at) : 'Not set'}</div>
+                        </div>
                         <input type="text" class="edit-image" value="${drop.image_url || ''}">
                         <input type="number" class="edit-blur" value="${drop.blur_level || 0}">
                         <input type="number" class="edit-order" value="${drop.sort_order || 0}">
@@ -257,16 +259,22 @@
 
         window.saveThis = async (id) => {
             const card = document.querySelector(`[data-id="${id}"]`);
+            const teaserVal = card.querySelector('.edit-teaser').value;
+            const unlockVal = card.querySelector('.edit-date').value;
+            
             const updates = {
                 title: card.querySelector('.edit-title').value,
                 drop_type: card.querySelector('.edit-type').value,
-                unlock_at: new Date(card.querySelector('.edit-date').value).toISOString(),
+                teaser_at: inputToUTC(teaserVal),
+                unlock_at: inputToUTC(unlockVal),
                 image_url: card.querySelector('.edit-image').value,
                 blur_level: parseInt(card.querySelector('.edit-blur').value),
                 sort_order: parseInt(card.querySelector('.edit-order').value),
                 is_visible: card.querySelector('.edit-visible').checked,
                 description: card.querySelector('.edit-desc').value
             };
+            
+            console.log('Saving updates:', updates); // Debug log
             
             const { error } = await updateDrop(id, updates);
             if (error) alert('Error: ' + error.message);
@@ -283,20 +291,33 @@
             else loadDrops();
         };
 
-        window.showAddForm = () => document.getElementById('addForm').style.display = 'block';
+        window.showAddForm = () => {
+            document.getElementById('addForm').style.display = 'block';
+            // Set default dates to now in CST
+            const nowCST = formatForDateTimeLocal(nowInCST());
+            document.getElementById('newTeaserDate').value = nowCST;
+            document.getElementById('newDropDate').value = nowCST;
+        };
+        
         window.hideAddForm = () => document.getElementById('addForm').style.display = 'none';
 
         window.addDrop = async () => {
+            const teaserVal = document.getElementById('newTeaserDate').value;
+            const dropVal = document.getElementById('newDropDate').value;
+            
             const drop = {
                 title: document.getElementById('newTitle').value,
                 drop_type: document.getElementById('newType').value,
-                unlock_at: new Date(document.getElementById('newDate').value).toISOString(),
+                teaser_at: inputToUTC(teaserVal),
+                unlock_at: inputToUTC(dropVal),
                 image_url: document.getElementById('newImage').value,
                 blur_level: parseInt(document.getElementById('newBlur').value),
                 sort_order: parseInt(document.getElementById('newOrder').value),
                 description: document.getElementById('newDesc').value,
                 is_visible: true
             };
+            
+            console.log('Creating drop:', drop); // Debug log
             
             const { error } = await createDrop(drop);
             if (error) alert('Error: ' + error.message);
@@ -306,17 +327,13 @@
             }
         };
 
-        // Mobile nav toggle
         window.toggleNav = () => {
             document.getElementById('navLinks').classList.toggle('active');
         };
 
-        // Initialize
         checkAuth();
         
-        // Listen for auth changes
-        supabase.auth.onAuthStateChange((event, session) => {
-            console.log('Auth state changed:', event);
+        supabase.auth.onAuthStateChange((event) => {
             if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                 checkAuth();
             }
