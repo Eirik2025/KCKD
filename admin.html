@@ -184,11 +184,17 @@
     </div>
 
     <script type="module">
-        import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase, formatForDateTimeLocal, formatDisplayDate, inputToUTC, getFactions, updateFaction, getFactionDrops, getVaultCards } from './js/supabase.js';
+    import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase, formatForDateTimeLocal, formatDisplayDate, inputToUTC, getFactions, updateFaction, getFactionDrops, getVaultCards } from './js/supabase.js';
 
-        let currentTab = 'all';
-        let factionsData = [];
-        let currentFaction = null;
+    // Expose to window for onclick handlers
+    window.inputToUTC = inputToUTC;
+    window.formatForDateTimeLocal = formatForDateTimeLocal;
+    window.formatDisplayDate = formatDisplayDate;
+    window.supabase = supabase;
+
+    let currentTab = 'all';
+    let factionsData = [];
+    let currentFaction = null;
 
         async function checkAuth() {
             try {
