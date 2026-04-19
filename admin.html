@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K&D Control</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
@@ -20,46 +20,60 @@
         .status-locked { background: var(--lava); }
         .status-unlocked { background: var(--fungus); }
         .status-hidden { background: var(--spirit); }
+        .loading { color: var(--text-secondary); font-style: italic; }
+        .error { color: var(--lava); }
     </style>
 </head>
 <body>
-    <!-- Admin Nav: Clean & Right-aligned controls -->
-<nav class="navbar admin nav">
-    <a href="index.html" class="logo-link">
-        <div class="logo font-display">K&D Control</div>
-    </a>
-    <a href="index.html" class="nav-logo-right">
-        <img src="assets/logo-icon.png" alt="K&D">
-    </a>
-    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
-    <div class="nav-links" id="navLinks">
-        <div class="dropdown">
-            <a href="factions.html">Factions</a>
-            <div class="dropdown-content">
-                <a href="set-fehu.html">Fehu</a>
-                <a href="set-godrin.html">Coming Soon</a>
+    <!-- Admin Nav -->
+    <nav class="navbar admin-nav">
+        <a href="index.html" class="logo-link">
+            <div class="logo font-display">K&D Control</div>
+        </a>
+        <a href="index.html" class="nav-logo-right">
+            <img src="assets/logo-icon.png" alt="K&D">
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <div class="dropdown">
+                <a href="factions.html">Factions</a>
+                <div class="dropdown-content">
+                    <a href="set-fehu.html">Fehu</a>
+                    <a href="set-godrin.html">Coming Soon</a>
+                </div>
             </div>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
-        <a href="vault.html">Vault</a>
-        <a href="whispers.html">Whispers</a>
-        <a href="qa.html">Q&A</a>
-        <a href="contact.html">Contact</a>
-        <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
-        <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
-    </div>
-</nav>
+    </nav>
 
     <div class="admin-container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1 class="font-display">Vault Control</h1>
-            <div id="adminStatus">Checking access...</div>
+            <div id="adminStatus" class="loading">Checking access...</div>
         </div>
 
-        <div id="loginForm" style="max-width: 400px; margin: 0 auto; text-align: center;">
+        <div id="loadingState" style="text-align: center; padding: 3rem;">
+            <p class="loading">Verifying credentials...</p>
+        </div>
+
+        <div id="loginForm" style="display: none; max-width: 400px; margin: 0 auto; text-align: center;">
             <h3>Authentication Required</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Admin access only.</p>
             <input type="email" id="loginEmail" placeholder="Email" style="width: 100%; margin: 0.5rem 0;">
             <input type="password" id="loginPass" placeholder="Password" style="width: 100%; margin: 0.5rem 0;">
             <button onclick="signInUser()" class="btn-save" style="width: 100%; margin-top: 1rem;">Sign In</button>
+            <a href="index.html" style="display: block; margin-top: 1rem; color: var(--text-secondary);">← Return to Site</a>
+        </div>
+
+        <div id="accessDenied" style="display: none; text-align: center; padding: 3rem;">
+            <h3 class="error">Access Denied</h3>
+            <p style="color: var(--text-secondary);">You do not have admin privileges.</p>
+            <a href="index.html" style="display: inline-block; margin-top: 1rem; color: var(--card-light-purple);">Return to Site</a>
         </div>
 
         <div id="adminPanel" style="display: none;">
@@ -88,47 +102,124 @@
             <div id="dropsList"></div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script type="module">
         import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase } from './js/supabase.js';
 
         async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-                document.getElementById('adminStatus').textContent = 'Not signed in';
-                return;
-            }
+            try {
+                // First check if we have a session
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) {
+                    console.error('Session error:', sessionError);
+                    showLogin();
+                    return;
+                }
 
-            const admin = await isAdmin();
-            if (!admin) {
-                document.getElementById('adminStatus').innerHTML = '<span style="color: var(--lava)">Access Denied</span>';
-                return;
-            }
+                // If no session, show login
+                if (!session) {
+                    console.log('No session found');
+                    showLogin();
+                    return;
+                }
 
+                console.log('Session found:', session.user.email);
+                
+                // We have a session, now check if user is admin
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (!user) {
+                    console.log('No user data');
+                    showLogin();
+                    return;
+                }
+
+                // Check admin status
+                const admin = await isAdmin();
+                console.log('Admin check result:', admin);
+
+                if (admin) {
+                    showAdminPanel();
+                    loadDrops();
+                } else {
+                    showAccessDenied();
+                }
+            } catch (err) {
+                console.error('Auth check failed:', err);
+                showLogin();
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
             document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminStatus').textContent = 'Checking access...';
+            document.getElementById('adminStatus').className = 'loading';
+        }
+
+        function showLogin() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminStatus').innerHTML = '<span class="error">Not signed in</span>';
+        }
+
+        function showAccessDenied() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminStatus').innerHTML = '<span class="error">Access Denied</span>';
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminStatus').innerHTML = '<span style="color: var(--fungus)">Access Granted</span>';
-            loadDrops();
+            
+            // Update navbar auth button
+            const authBtn = document.getElementById('authBtn');
+            if (authBtn) {
+                authBtn.textContent = 'Sign Out';
+                authBtn.href = '#';
+                authBtn.onclick = async (e) => {
+                    e.preventDefault();
+                    await signOut();
+                    window.location.href = 'index.html';
+                };
+            }
         }
 
         window.signInUser = async () => {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
+            
+            showLoading();
+            
             const { error } = await signIn(email, pass);
-            if (error) alert(error.message);
-            else checkAuth();
-        };
-
-        window.signOutUser = async () => {
-            await signOut();
-            window.location.href = 'index.html';
+            if (error) {
+                alert('Access denied: ' + error.message);
+                showLogin();
+            } else {
+                // Recheck auth after sign in
+                await checkAuth();
+            }
         };
 
         async function loadDrops() {
             const drops = await getAllDropsAdmin();
             const container = document.getElementById('dropsList');
+            
+            if (!drops || drops.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No drops scheduled.</p>';
+                return;
+            }
             
             container.innerHTML = drops.map(drop => {
                 const isLocked = new Date(drop.unlock_at) > new Date();
@@ -149,10 +240,10 @@
                             <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
                             <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
                         </select>
-                        <input type="datetime-local" class="edit-date" value="${drop.unlock_at.slice(0, 16)}">
+                        <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? drop.unlock_at.slice(0, 16) : ''}">
                         <input type="text" class="edit-image" value="${drop.image_url || ''}">
-                        <input type="number" class="edit-blur" value="${drop.blur_level}">
-                        <input type="number" class="edit-order" value="${drop.sort_order}">
+                        <input type="number" class="edit-blur" value="${drop.blur_level || 0}">
+                        <input type="number" class="edit-order" value="${drop.sort_order || 0}">
                         <label style="grid-column: span 2;">
                             <input type="checkbox" class="edit-visible" ${drop.is_visible ? 'checked' : ''}> Visible on site
                         </label>
@@ -176,15 +267,20 @@
                 is_visible: card.querySelector('.edit-visible').checked,
                 description: card.querySelector('.edit-desc').value
             };
+            
             const { error } = await updateDrop(id, updates);
             if (error) alert('Error: ' + error.message);
-            else { alert('Updated!'); loadDrops(); }
+            else { 
+                alert('Updated!'); 
+                loadDrops(); 
+            }
         };
 
         window.deleteThis = async (id) => {
-            if (!confirm('Delete?')) return;
-            await deleteDrop(id);
-            loadDrops();
+            if (!confirm('Delete this drop?')) return;
+            const { error } = await deleteDrop(id);
+            if (error) alert('Error: ' + error.message);
+            else loadDrops();
         };
 
         window.showAddForm = () => document.getElementById('addForm').style.display = 'block';
@@ -201,13 +297,30 @@
                 description: document.getElementById('newDesc').value,
                 is_visible: true
             };
+            
             const { error } = await createDrop(drop);
             if (error) alert('Error: ' + error.message);
-            else { hideAddForm(); loadDrops(); }
+            else { 
+                hideAddForm(); 
+                loadDrops(); 
+            }
         };
 
+        // Mobile nav toggle
+        window.toggleNav = () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        };
+
+        // Initialize
         checkAuth();
-        supabase.auth.onAuthStateChange(() => checkAuth());
+        
+        // Listen for auth changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth state changed:', event);
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                checkAuth();
+            }
+        });
     </script>
 </body>
 </html>
