@@ -1,6 +1,10 @@
+// REPLACE your entire app.js with this fixed version:
+
 console.log('APP.JS LOADED');
 
 import { supabase } from './supabase.js';
+
+let isSigningOut = false; // Flag to prevent race conditions
 
 async function isAdmin() {
     try {
@@ -15,6 +19,12 @@ async function isAdmin() {
 }
 
 async function updateNavbar() {
+    // Skip update if we're in the middle of signing out
+    if (isSigningOut) {
+        console.log('Skipping navbar update - sign out in progress');
+        return;
+    }
+    
     console.log('Checking auth...');
     
     try {
@@ -36,11 +46,34 @@ async function updateNavbar() {
             console.log('Setting Sign Out');
             authBtn.textContent = 'Sign Out';
             authBtn.href = '#';
-            authBtn.onclick = async (e) => {
+            
+            // Remove any existing listeners to prevent duplicates
+            const newAuthBtn = authBtn.cloneNode(true);
+            authBtn.parentNode.replaceChild(newAuthBtn, authBtn);
+            
+            newAuthBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                await supabase.auth.signOut();
-                location.reload();
-            };
+                e.stopPropagation(); // Prevent event bubbling
+                console.log('Signing out...');
+                
+                isSigningOut = true; // Set flag before async operation
+                
+                try {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) {
+                        console.error('Sign out error:', error);
+                        alert('Failed to sign out: ' + error.message);
+                        isSigningOut = false; // Reset flag on error
+                    } else {
+                        console.log('Signed out successfully - redirecting...');
+                        // Force immediate redirect, don't wait for auth state change
+                        window.location.replace('index.html');
+                    }
+                } catch (err) {
+                    console.error('Sign out exception:', err);
+                    isSigningOut = false;
+                }
+            });
             
             if (adminLink) {
                 const admin = await isAdmin();
@@ -49,10 +82,13 @@ async function updateNavbar() {
             }
         } else {
             console.log('Setting Sign In');
-            authBtn.textContent = 'Sign In';
-            authBtn.href = 'login.html';
-            authBtn.onclick = null;
-            if (adminLink) adminLink.style.display = 'none';
+            // Only update if not currently on login page (avoid flicker)
+            if (authBtn.textContent !== 'Sign In') {
+                authBtn.textContent = 'Sign In';
+                authBtn.href = 'index.html'; // Changed from 'login.html' to match your structure
+                const newAuthBtn = authBtn.cloneNode(true);
+                authBtn.parentNode.replaceChild(newAuthBtn, authBtn);
+            }
         }
     } catch (err) {
         console.error('Navbar crash:', err);
@@ -67,7 +103,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     updateNavbar();
 
-    supabase.auth.onAuthStateChange(() => updateNavbar());
+    // Only update navbar on auth changes if we're not signing out
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log('Auth state changed:', event, session);
+        if (!isSigningOut) {
+            updateNavbar();
+        }
+    });
 
     // Mobile nav toggle
     window.toggleNav = () => {

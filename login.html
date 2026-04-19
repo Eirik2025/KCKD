@@ -35,7 +35,7 @@
         <div id="loggedInPanel" style="display: none;">
     <p style="color: var(--card-beige); margin-bottom: 1rem;">You are already initiated.</p>
     <p id="loggedInEmail" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;"></p>
-    <button onclick="handleLogout()" class="btn-delete" style="width: 100%; background: var(--lava);">Sign Out</button>
+    <button id="logoutBtn" class="btn-delete" style="width: 100%; background: var(--lava);">Sign Out</button>
         </div>
         
         <a href="index.html" style="display: block; margin-top: 1.5rem; text-decoration: none; color: var(--text-secondary);">← Return to Site</a>
@@ -76,7 +76,7 @@
     
     window.handleLogout = async () => {
         await signOut();
-        location.reload();
+        window.location.href = 'index.html';
     };
     
     // Check if already logged in
@@ -87,6 +87,17 @@
         document.getElementById('loggedInPanel').style.display = 'block';
         document.getElementById('loggedInEmail').textContent = user.email;
     }
+
+    // Add this inside your login.html module script, after the other functions:
+document.addEventListener('DOMContentLoaded', async () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            await signOut();
+            window.location.href = 'index.html';
+        });
+    }
+});
 </script>
 
 </body>
