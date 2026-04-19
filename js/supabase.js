@@ -4,42 +4,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ========== CST TIMEZONE HELPERS ==========
-// Iowa uses America/Chicago (CST/CDT - UTC-6 or UTC-5)
 
 function getCSTOffset() {
-    // Get current CST offset (handles DST automatically)
     const now = new Date();
     const cstString = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
     const cstDate = new Date(cstString);
-    const offset = (now.getTime() - cstDate.getTime()) / (60 * 60 * 1000);
-    return offset;
-}
-
-function localToCST(localDate) {
-    // Convert local date to CST by adding the offset
-    const offset = getCSTOffset();
-    return new Date(localDate.getTime() + (offset * 60 * 60 * 1000));
-}
-
-function cstToUTC(cstDate) {
-    // CST is UTC-6 (standard) or UTC-5 (DST)
-    // So to convert CST to UTC, we ADD 6 or 5 hours
-    const offset = getCSTOffset();
-    return new Date(cstDate.getTime() - (offset * 60 * 60 * 1000));
+    return (now.getTime() - cstDate.getTime()) / (60 * 60 * 1000);
 }
 
 function nowInCST() {
-    const now = new Date();
-    const cstString = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+    const cstString = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
     return new Date(cstString);
 }
 
 function formatForDateTimeLocal(cstDate) {
-    // Format CST date for datetime-local input (shows in browser local time)
-    // We need to adjust so when user picks a time, it represents CST
     const pad = (n) => n.toString().padStart(2, '0');
-    
-    // Get CST components
     const cstString = cstDate.toLocaleString('en-US', { 
         timeZone: 'America/Chicago',
         year: 'numeric',
@@ -49,17 +28,14 @@ function formatForDateTimeLocal(cstDate) {
         minute: '2-digit',
         hour12: false
     });
-    
-    // Parse the CST string
     const [datePart, timePart] = cstString.split(', ');
     const [month, day, year] = datePart.split('/');
     const [hour, minute] = timePart.split(':');
-    
     return `${year}-${month}-${day}T${hour}:${minute}`;
 }
 
 function formatDisplayDate(utcDateString) {
-    // Convert UTC from database to CST display
+    if (!utcDateString) return 'Not set';
     const date = new Date(utcDateString);
     return date.toLocaleString('en-US', { 
         timeZone: 'America/Chicago',
@@ -72,27 +48,18 @@ function formatDisplayDate(utcDateString) {
     });
 }
 
-// Convert datetime-local input (interpreted as local) to UTC for storage
-// User enters time in CST, we store as UTC
 function inputToUTC(dateString) {
     if (!dateString) return null;
-    
-    // Parse the input as if it's CST
     const [datePart, timePart] = dateString.split('T');
     const [year, month, day] = datePart.split('-').map(Number);
     const [hour, minute] = timePart.split(':').map(Number);
-    
-    // Create date in CST
     const cstDate = new Date(year, month - 1, day, hour, minute);
-    
-    // Convert to UTC by adding CST offset
     const offset = getCSTOffset();
-    const utcDate = new Date(cstDate.getTime() + (offset * 60 * 60 * 1000));
-    
-    return utcDate.toISOString();
+    return new Date(cstDate.getTime() + (offset * 60 * 60 * 1000)).toISOString();
 }
 
-// Auth helpers
+// ========== AUTH HELPERS ==========
+
 async function signUp(email, password) {
     return await supabase.auth.signUp({ email, password });
 }
@@ -105,37 +72,49 @@ async function signOut() {
     return await supabase.auth.signOut();
 }
 
-// ========== UPDATED DROP HELPERS ==========
-async function getDrops() {
-    const now = new Date().toISOString(); // Server compares in UTC
-    const { data, error } = await supabase
+async function isAdmin() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+    const { data } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+    return data?.is_admin || false;
+}
+
+// ========== DROP HELPERS ==========
+
+async function getDrops(type = null) {
+    const now = new Date().toISOString();
+    let query = supabase
         .from('drops')
         .select('*')
         .lte('unlock_at', now)
         .eq('is_visible', true)
         .order('sort_order');
     
+    if (type) query = query.eq('drop_type', type);
+    
+    const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
 }
 
-async function getUpcomingDrops() {
+async function getUpcomingDrops(type = null) {
     const now = new Date().toISOString();
-    const { data, error } = await supabase
+    let query = supabase
         .from('drops')
         .select('*')
         .gt('unlock_at', now)
         .eq('is_visible', true)
-        .order('unlock_at', { ascending: true })
-        .limit(1);
+        .order('unlock_at', { ascending: true });
     
-    return data?.[0] || null;
+    if (type) query = query.eq('drop_type', type);
+    
+    const { data, error } = await query;
+    return data || [];
 }
 
-// Get teasers - visible but not yet officially dropped
-async function getTeasers() {
+async function getTeasers(type = null) {
     const now = new Date().toISOString();
-    const { data, error } = await supabase
+    let query = supabase
         .from('drops')
         .select('*')
         .lte('teaser_at', now)
@@ -143,72 +122,154 @@ async function getTeasers() {
         .eq('is_visible', true)
         .order('unlock_at');
     
+    if (type) query = query.eq('drop_type', type);
+    
+    const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
 }
 
-// Check if a specific drop is in teaser phase
-async function isTeaser(drop) {
-    const now = new Date();
-    const teaserAt = drop.teaser_at ? new Date(drop.teaser_at) : null;
-    const unlockAt = drop.unlock_at ? new Date(drop.unlock_at) : null;
-    
-    if (!teaserAt || !unlockAt) return false;
-    return now >= teaserAt && now < unlockAt;
-}
-
-// Check if drop is fully unlocked
-async function isUnlocked(drop) {
-    if (!drop.unlock_at) return false;
-    return new Date() >= new Date(drop.unlock_at);
-}
-
-async function isAdmin() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-    
-    const { data } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single();
-    
-    return data?.is_admin || false;
-}
-
-async function getAllDropsAdmin() {
-    const { data, error } = await supabase
-        .from('drops')
-        .select('*')
-        .order('sort_order');
-    
+async function getAllDropsAdmin(type = null) {
+    let query = supabase.from('drops').select('*').order('sort_order');
+    if (type) query = query.eq('drop_type', type);
+    const { data, error } = await query;
     return data || [];
 }
 
 async function updateDrop(id, updates) {
-    return await supabase
-        .from('drops')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id);
+    return await supabase.from('drops').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id);
 }
 
 async function createDrop(drop) {
-    return await supabase
-        .from('drops')
-        .insert([drop]);
+    return await supabase.from('drops').insert([drop]);
 }
 
 async function deleteDrop(id) {
-    return await supabase
-        .from('drops')
-        .delete()
-        .eq('id', id);
+    return await supabase.from('drops').delete().eq('id', id);
 }
 
+// ========== VAULT/CARDS HELPERS ==========
+
+async function getVaultCards(factionId = null) {
+    const now = new Date().toISOString();
+    let query = supabase
+        .from('drops')
+        .select('*')
+        .eq('drop_type', 'vault')
+        .lte('unlock_at', now)
+        .eq('is_visible', true)
+        .order('sort_order');
+    
+    if (factionId) query = query.eq('faction_id', factionId);
+    
+    const { data, error } = await query;
+    if (error) console.error(error);
+    return data || [];
+}
+
+async function getVaultTeasers(factionId = null) {
+    const now = new Date().toISOString();
+    let query = supabase
+        .from('drops')
+        .select('*')
+        .eq('drop_type', 'vault')
+        .lte('teaser_at', now)
+        .gt('unlock_at', now)
+        .eq('is_visible', true)
+        .order('sort_order');
+    
+    if (factionId) query = query.eq('faction_id', factionId);
+    
+    const { data, error } = await query;
+    if (error) console.error(error);
+    return data || [];
+}
+
+// ========== FACTIONS/SETS HELPERS ==========
+
+async function getFactions() {
+    const { data, error } = await supabase.from('faction_lore').select('*').order('name');
+    if (error) console.error(error);
+    return data || [];
+}
+
+async function getFaction(factionId) {
+    const { data, error } = await supabase.from('faction_lore').select('*').eq('faction_id', factionId).single();
+    if (error) console.error(error);
+    return data;
+}
+
+async function updateFaction(factionId, updates) {
+    return await supabase.from('faction_lore').update({ ...updates, updated_at: new Date().toISOString() }).eq('faction_id', factionId);
+}
+
+async function getFactionDrops(factionId) {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+        .from('drops')
+        .select('*')
+        .eq('faction_id', factionId)
+        .eq('is_visible', true)
+        .or(`unlock_at.lte.${now},teaser_at.lte.${now}`)
+        .order('sort_order');
+    
+    if (error) console.error(error);
+    return data || [];
+}
+
+// ========== WHISPERS HELPERS ==========
+
+async function getWhispers() {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+        .from('drops')
+        .select('*')
+        .eq('drop_type', 'whisper')
+        .lte('unlock_at', now)
+        .eq('is_visible', true)
+        .order('unlock_at', { ascending: false });
+    
+    if (error) console.error(error);
+    return data || [];
+}
+
+async function getWhisperTeasers() {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+        .from('drops')
+        .select('*')
+        .eq('drop_type', 'whisper')
+        .lte('teaser_at', now)
+        .gt('unlock_at', now)
+        .eq('is_visible', true)
+        .order('teaser_at', { ascending: false });
+    
+    if (error) console.error(error);
+    return data || [];
+}
+
+// ========== STATUS CHECKERS ==========
+
+function getDropStatus(drop) {
+    const now = new Date();
+    const teaserAt = drop.teaser_at ? new Date(drop.teaser_at) : null;
+    const unlockAt = drop.unlock_at ? new Date(drop.unlock_at) : null;
+    
+    if (!drop.is_visible) return { text: 'HIDDEN', class: 'status-hidden', state: 'hidden' };
+    if (unlockAt && now >= unlockAt) return { text: 'UNLOCKED', class: 'status-unlocked', state: 'unlocked' };
+    if (teaserAt && now >= teaserAt) return { text: 'TEASER', class: 'status-teaser', state: 'teaser' };
+    return { text: 'LOCKED', class: 'status-locked', state: 'locked' };
+}
+
+// ========== EXPORTS ==========
+
 export { 
-    supabase, signUp, signIn, signOut, 
-    getDrops, getUpcomingDrops, getTeasers, isAdmin,
-    getAllDropsAdmin, updateDrop, createDrop, deleteDrop,
-    isTeaser, isUnlocked, nowInCST, formatForDateTimeLocal, 
+    supabase, signUp, signIn, signOut, isAdmin,
+    getDrops, getUpcomingDrops, getTeasers, getAllDropsAdmin,
+    updateDrop, createDrop, deleteDrop,
+    getVaultCards, getVaultTeasers,
+    getFactions, getFaction, updateFaction, getFactionDrops,
+    getWhispers, getWhisperTeasers,
+    getDropStatus, nowInCST, formatForDateTimeLocal, 
     formatDisplayDate, inputToUTC
 };

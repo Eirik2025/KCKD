@@ -10,13 +10,7 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .admin-container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
-        .admin-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 2px solid var(--accent); flex-wrap: wrap; }
-        .admin-tab { padding: 1rem 2rem; background: var(--bg-secondary); border: none; color: var(--text-secondary); cursor: pointer; font-family: var(--font-display); transition: all 0.3s; }
-        .admin-tab.active { background: var(--accent); color: white; }
-        .admin-tab:hover:not(.active) { background: var(--card-deep-purple); color: var(--card-light-purple); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
         .drop-card { background: var(--bg-secondary); border: 1px solid var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
         .btn-save { background: var(--fungus); color: white; border: none; padding: 0.75rem 1.5rem; cursor: pointer; font-family: var(--font-display); }
@@ -31,22 +25,16 @@
         .error { color: var(--lava); }
         .timezone-note { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem; font-style: italic; }
         .date-display { color: var(--card-beige); font-size: 0.9rem; margin-top: 0.25rem; }
-        .faction-editor { background: var(--bg-secondary); padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--accent); }
-        .faction-editor textarea { width: 100%; min-height: 200px; margin-top: 1rem; }
-        .faction-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .faction-item { background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); cursor: pointer; transition: all 0.3s; }
-        .faction-item:hover { border-color: var(--card-light-purple); transform: translateY(-2px); }
-        .faction-item.active { border-color: var(--fungus); background: rgba(5, 124, 0, 0.1); }
-        .type-badge { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--card-deep-purple); margin-left: 0.5rem; }
-        .filter-bar { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .filter-btn { padding: 0.5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--accent); color: var(--text-secondary); cursor: pointer; border-radius: 4px; }
-        .filter-btn.active { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
     <nav class="navbar admin-nav">
-        <a href="index.html" class="logo-link"><div class="logo font-display">K&D Control</div></a>
-        <a href="index.html" class="nav-logo-right"><img src="assets/logo-icon.png" alt="K&D"></a>
+        <a href="index.html" class="logo-link">
+            <div class="logo font-display">K&D Control</div>
+        </a>
+        <a href="index.html" class="nav-logo-right">
+            <img src="assets/logo-icon.png" alt="K&D">
+        </a>
         <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
         <div class="nav-links" id="navLinks">
             <div class="dropdown">
@@ -91,119 +79,60 @@
         </div>
 
         <div id="adminPanel" style="display: none;">
-            <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchTab('all')">All Drops</button>
-                <button class="admin-tab" onclick="switchTab('vault')">Vault Cards</button>
-                <button class="admin-tab" onclick="switchTab('factions')">Factions/Sets</button>
-                <button class="admin-tab" onclick="switchTab('whispers')">Whispers</button>
-                <button class="admin-tab" onclick="switchTab('pages')">Pages</button>
-            </div>
-
-            <!-- ALL DROPS TAB -->
-            <div id="tab-all" class="tab-content active">
-                <button onclick="showAddForm()" class="btn-add">+ Schedule New Drop</button>
-                <div id="addForm" style="display: none; background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--accent);">
-                    <h3 class="font-display">New Drop</h3>
-                    <div class="form-grid">
-                        <input type="text" id="newTitle" placeholder="Title">
-                        <select id="newType" onchange="updateFormFields()">
-                            <option value="vault">Vault Card</option>
-                            <option value="faction">Faction</option>
-                            <option value="whisper">Whisper</option>
-                            <option value="page">Page Release</option>
-                            <option value="timeline">Timeline Event</option>
-                            <option value="hero">Hero Section</option>
-                        </select>
-                        <div style="grid-column: span 2;">
-                            <label style="color: var(--text-secondary); font-size: 0.9rem;">Teaser Date (CST):</label>
-                            <input type="datetime-local" id="newTeaserDate">
-                            <div class="timezone-note">All times are Central Standard Time (Iowa)</div>
-                        </div>
-                        <div style="grid-column: span 2;">
-                            <label style="color: var(--text-secondary); font-size: 0.9rem;">Official Drop Date (CST):</label>
-                            <input type="datetime-local" id="newDropDate">
-                        </div>
-                        <input type="text" id="newFactionId" placeholder="Faction ID (if applicable)">
-                        <input type="text" id="newCardNumber" placeholder="Card # (if applicable)">
-                        <input type="text" id="newImage" placeholder="Image path" value="assets/cards/card-back.png">
-                        <input type="text" id="newRarity" placeholder="Rarity (common/uncommon/rare/mythic/gold)">
-                        <input type="number" id="newBlur" placeholder="Blur px" value="8">
-                        <input type="number" id="newOrder" placeholder="Sort Order" value="0">
-                        <textarea id="newDesc" placeholder="Description" style="grid-column: span 2;"></textarea>
-                        <textarea id="newContent" placeholder="Full Content (for stories/lore)" style="grid-column: span 2; min-height: 150px;"></textarea>
+            <button onclick="showAddForm()" class="btn-add">+ Schedule New Drop</button>
+            
+            <div id="addForm" style="display: none; background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--accent);">
+                <h3 class="font-display">New Drop</h3>
+                <div class="form-grid">
+                    <input type="text" id="newTitle" placeholder="Title">
+                    <select id="newType">
+                        <option value="faction">Faction</option>
+                        <option value="vault">Vault Card</option>
+                        <option value="timeline">Timeline Event</option>
+                        <option value="hero">Hero Section</option>
+                        <option value="page">Page Release</option>
+                    </select>
+                    <div style="grid-column: span 2;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem;">Teaser Date (CST) - When preview appears:</label>
+                        <input type="datetime-local" id="newTeaserDate">
+                        <div class="timezone-note">All times are Central Standard Time (Iowa)</div>
                     </div>
-                    <button onclick="addDrop()" class="btn-save" style="margin-top: 1rem;">Create Drop</button>
-                    <button onclick="hideAddForm()" style="margin-left: 1rem;">Cancel</button>
-                </div>
-                <div id="dropsList"></div>
-            </div>
-
-            <!-- VAULT TAB -->
-            <div id="tab-vault" class="tab-content">
-                <div class="filter-bar">
-                    <button class="filter-btn active" onclick="filterVault('all')">All Cards</button>
-                    <button class="filter-btn" onclick="filterVault('fehu')">Fehu</button>
-                    <button class="filter-btn" onclick="filterVault('godrin')">Godrin</button>
-                </div>
-                <button onclick="showAddForm('vault')" class="btn-add">+ Add Vault Card</button>
-                <div id="vaultList"></div>
-            </div>
-
-            <!-- FACTIONS TAB -->
-            <div id="tab-factions" class="tab-content">
-                <div class="faction-list" id="factionList"></div>
-                <div id="factionEditor" style="display: none; margin-top: 2rem;">
-                    <div class="faction-editor">
-                        <h3 class="font-display" id="editingFactionName">Edit Faction</h3>
-                        <input type="hidden" id="editFactionId">
-                        <input type="text" id="editFactionTagline" placeholder="Tagline" style="width: 100%; margin-bottom: 1rem;">
-                        <input type="text" id="editFactionColor" placeholder="Sigil Color (hex)" style="width: 100%; margin-bottom: 1rem;">
-                        <textarea id="editFactionStory" placeholder="Full story/lore content..."></textarea>
-                        <div style="margin-top: 1rem;">
-                            <button onclick="saveFaction()" class="btn-save">Save Faction Lore</button>
-                            <button onclick="cancelFactionEdit()" style="margin-left: 1rem;">Cancel</button>
-                        </div>
+                    <div style="grid-column: span 2;">
+                        <label style="color: var(--text-secondary); font-size: 0.9rem;">Official Drop Date (CST) - When fully unlocked:</label>
+                        <input type="datetime-local" id="newDropDate">
                     </div>
-                    <h4 class="font-display" style="margin-top: 2rem;">Faction Drops</h4>
-                    <div id="factionDropsList"></div>
+                    <input type="text" id="newImage" placeholder="Image path" value="assets/cards/card-back.png">
+                    <input type="number" id="newBlur" placeholder="Blur px" value="8">
+                    <input type="number" id="newOrder" placeholder="Sort Order" value="0">
+                    <textarea id="newDesc" placeholder="Description" style="grid-column: span 2;"></textarea>
                 </div>
+                <button onclick="addDrop()" class="btn-save" style="margin-top: 1rem;">Create Drop</button>
+                <button onclick="hideAddForm()" style="margin-left: 1rem;">Cancel</button>
             </div>
 
-            <!-- WHISPERS TAB -->
-            <div id="tab-whispers" class="tab-content">
-                <button onclick="showAddForm('whisper')" class="btn-add">+ New Whisper</button>
-                <div id="whispersList"></div>
-            </div>
-
-            <!-- PAGES TAB -->
-            <div id="tab-pages" class="tab-content">
-                <button onclick="showAddForm('page')" class="btn-add">+ New Page Release</button>
-                <div id="pagesList"></div>
-            </div>
+            <div id="dropsList"></div>
         </div>
     </div>
 
     <script type="module">
-    import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase, formatForDateTimeLocal, formatDisplayDate, inputToUTC, getFactions, updateFaction, getFactionDrops, getVaultCards } from './js/supabase.js';
-
-    // Expose to window for onclick handlers
-    window.inputToUTC = inputToUTC;
-    window.formatForDateTimeLocal = formatForDateTimeLocal;
-    window.formatDisplayDate = formatDisplayDate;
-    window.supabase = supabase;
-
-    let currentTab = 'all';
-    let factionsData = [];
-    let currentFaction = null;
+        import { signIn, signOut, isAdmin, getAllDropsAdmin, updateDrop, createDrop, deleteDrop, supabase, formatForDateTimeLocal, formatDisplayDate, nowInCST } from './js/supabase.js';
 
         async function checkAuth() {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) { showLogin(); return; }
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                 
+                if (sessionError || !session) {
+                    showLogin();
+                    return;
+                }
+
                 const admin = await isAdmin();
-                if (admin) { showAdminPanel(); loadAllData(); }
-                else { showAccessDenied(); }
+                if (admin) {
+                    showAdminPanel();
+                    loadDrops();
+                } else {
+                    showAccessDenied();
+                }
             } catch (err) {
                 console.error('Auth check failed:', err);
                 showLogin();
@@ -265,35 +194,15 @@
             }
         };
 
-        window.switchTab = (tab) => {
-            currentTab = tab;
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            
-            if (tab === 'factions') loadFactions();
-            else if (tab === 'vault') loadVault('all');
-            else if (tab === 'whispers') loadWhispers();
-            else if (tab === 'pages') loadPages();
-            else loadDrops();
-        };
-
-        async function loadAllData() {
-            await loadDrops();
-            await loadFactions();
-        }
-
         function getStatus(drop) {
-            const now = new Date();
-            const teaserAt = drop.teaser_at ? new Date(drop.teaser_at) : null;
-            const unlockAt = drop.unlock_at ? new Date(drop.unlock_at) : null;
+            const now = nowInCST();
+            const teaser = new Date(drop.teaser_at);
+            const unlock = new Date(drop.unlock_at);
             
-            if (!drop.is_visible) return { text: 'HIDDEN', class: 'status-hidden', state: 'hidden' };
-            if (unlockAt && now >= unlockAt) return { text: 'UNLOCKED', class: 'status-unlocked', state: 'unlocked' };
-            if (teaserAt && now >= teaserAt) return { text: 'TEASER', class: 'status-teaser', state: 'teaser' };
-            return { text: 'LOCKED', class: 'status-locked', state: 'locked' };
+            if (!drop.is_visible) return { text: 'HIDDEN', class: 'status-hidden' };
+            if (now >= unlock) return { text: 'UNLOCKED', class: 'status-unlocked' };
+            if (now >= teaser) return { text: 'TEASER', class: 'status-teaser' };
+            return { text: 'LOCKED', class: 'status-locked' };
         }
 
         async function loadDrops() {
@@ -305,73 +214,67 @@
                 return;
             }
             
-            container.innerHTML = drops.map(drop => renderDropCard(drop)).join('');
-        }
-
-        function renderDropCard(drop) {
-            const status = getStatus(drop);
-            const typeBadge = `<span class="type-badge">${drop.drop_type}</span>`;
-            
-            return `
-            <div class="drop-card" data-id="${drop.id}">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                    <h4 class="font-display">${drop.title} ${typeBadge} <span class="status-badge ${status.class}">${status.text}</span></h4>
-                    <button onclick="deleteThis('${drop.id}')" class="btn-delete">Delete</button>
-                </div>
-                <div class="form-grid">
-                    <input type="text" class="edit-title" value="${drop.title}">
-                    <select class="edit-type">
-                        <option value="vault" ${drop.drop_type === 'vault' ? 'selected' : ''}>Vault</option>
-                        <option value="faction" ${drop.drop_type === 'faction' ? 'selected' : ''}>Faction</option>
-                        <option value="whisper" ${drop.drop_type === 'whisper' ? 'selected' : ''}>Whisper</option>
-                        <option value="page" ${drop.drop_type === 'page' ? 'selected' : ''}>Page</option>
-                        <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
-                        <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
-                    </select>
-                    <div style="grid-column: span 2;">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Teaser Date (CST):</label>
-                        <input type="datetime-local" class="edit-teaser" value="${drop.teaser_at ? formatForDateTimeLocal(new Date(drop.teaser_at)) : ''}">
-                        <div class="date-display">Current: ${formatDisplayDate(drop.teaser_at)}</div>
+            container.innerHTML = drops.map(drop => {
+                const status = getStatus(drop);
+                const now = new Date();
+                
+                return `
+                <div class="drop-card" data-id="${drop.id}">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h4 class="font-display">${drop.title} <span class="status-badge ${status.class}">${status.text}</span></h4>
+                        <button onclick="deleteThis('${drop.id}')" class="btn-delete">Delete</button>
                     </div>
-                    <div style="grid-column: span 2;">
-                        <label style="color: var(--text-secondary); font-size: 0.85rem;">Official Drop Date (CST):</label>
-                        <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? formatForDateTimeLocal(new Date(drop.unlock_at)) : ''}">
-                        <div class="date-display">Current: ${formatDisplayDate(drop.unlock_at)}</div>
+                    <div class="form-grid">
+                        <input type="text" class="edit-title" value="${drop.title}">
+                        <select class="edit-type">
+                            <option value="faction" ${drop.drop_type === 'faction' ? 'selected' : ''}>Faction</option>
+                            <option value="vault" ${drop.drop_type === 'vault' ? 'selected' : ''}>Vault</option>
+                            <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
+                            <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
+                            <option value="page" ${drop.drop_type === 'page' ? 'selected' : ''}>Page Release</option>
+                        </select>
+                        <div style="grid-column: span 2;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Teaser Date (CST):</label>
+                            <input type="datetime-local" class="edit-teaser" value="${drop.teaser_at ? formatForDateTimeLocal(new Date(drop.teaser_at)) : ''}">
+                            <div class="date-display">Current: ${drop.teaser_at ? formatDisplayDate(drop.teaser_at) : 'Not set'}</div>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem;">Official Drop Date (CST):</label>
+                            <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? formatForDateTimeLocal(new Date(drop.unlock_at)) : ''}">
+                            <div class="date-display">Current: ${drop.unlock_at ? formatDisplayDate(drop.unlock_at) : 'Not set'}</div>
+                        </div>
+                        <input type="text" class="edit-image" value="${drop.image_url || ''}">
+                        <input type="number" class="edit-blur" value="${drop.blur_level || 0}">
+                        <input type="number" class="edit-order" value="${drop.sort_order || 0}">
+                        <label style="grid-column: span 2;">
+                            <input type="checkbox" class="edit-visible" ${drop.is_visible ? 'checked' : ''}> Visible on site
+                        </label>
+                        <textarea class="edit-desc" style="grid-column: span 2;">${drop.description || ''}</textarea>
                     </div>
-                    <input type="text" class="edit-faction" value="${drop.faction_id || ''}" placeholder="Faction ID">
-                    <input type="text" class="edit-cardnum" value="${drop.card_number || ''}" placeholder="Card #">
-                    <input type="text" class="edit-image" value="${drop.image_url || ''}">
-                    <input type="text" class="edit-rarity" value="${drop.rarity || ''}" placeholder="Rarity">
-                    <input type="number" class="edit-blur" value="${drop.blur_level || 0}">
-                    <input type="number" class="edit-order" value="${drop.sort_order || 0}">
-                    <label style="grid-column: span 2;">
-                        <input type="checkbox" class="edit-visible" ${drop.is_visible ? 'checked' : ''}> Visible on site
-                    </label>
-                    <textarea class="edit-desc" style="grid-column: span 2;" placeholder="Description">${drop.description || ''}</textarea>
-                    <textarea class="edit-content" style="grid-column: span 2; min-height: 100px;" placeholder="Full content/story">${drop.content || ''}</textarea>
+                    <button onclick="saveThis('${drop.id}')" class="btn-save" style="margin-top: 1rem;">Save Changes</button>
                 </div>
-                <button onclick="saveThis('${drop.id}')" class="btn-save" style="margin-top: 1rem;">Save Changes</button>
-            </div>
-            `;
+                `;
+            }).join('');
         }
 
         window.saveThis = async (id) => {
             const card = document.querySelector(`[data-id="${id}"]`);
+            const teaserVal = card.querySelector('.edit-teaser').value;
+            const unlockVal = card.querySelector('.edit-date').value;
+            
             const updates = {
                 title: card.querySelector('.edit-title').value,
                 drop_type: card.querySelector('.edit-type').value,
-                teaser_at: inputToUTC(card.querySelector('.edit-teaser').value),
-                unlock_at: inputToUTC(card.querySelector('.edit-date').value),
-                faction_id: card.querySelector('.edit-faction').value || null,
-                card_number: card.querySelector('.edit-cardnum').value || null,
+                teaser_at: inputToUTC(teaserVal),
+                unlock_at: inputToUTC(unlockVal),
                 image_url: card.querySelector('.edit-image').value,
-                rarity: card.querySelector('.edit-rarity').value || null,
                 blur_level: parseInt(card.querySelector('.edit-blur').value),
                 sort_order: parseInt(card.querySelector('.edit-order').value),
                 is_visible: card.querySelector('.edit-visible').checked,
-                description: card.querySelector('.edit-desc').value,
-                content: card.querySelector('.edit-content').value
+                description: card.querySelector('.edit-desc').value
             };
+            
+            console.log('Saving updates:', updates); // Debug log
             
             const { error } = await updateDrop(id, updates);
             if (error) alert('Error: ' + error.message);
@@ -385,45 +288,36 @@
             if (!confirm('Delete this drop?')) return;
             const { error } = await deleteDrop(id);
             if (error) alert('Error: ' + error.message);
-            else {
-                if (currentTab === 'all') loadDrops();
-                else if (currentTab === 'vault') loadVault('all');
-                else if (currentTab === 'whispers') loadWhispers();
-                else if (currentTab === 'pages') loadPages();
-            }
+            else loadDrops();
         };
 
-        window.showAddForm = (type = null) => {
+        window.showAddForm = () => {
             document.getElementById('addForm').style.display = 'block';
-            if (type) document.getElementById('newType').value = type;
-            const nowCST = formatForDateTimeLocal(new Date());
+            // Set default dates to now in CST
+            const nowCST = formatForDateTimeLocal(nowInCST());
             document.getElementById('newTeaserDate').value = nowCST;
             document.getElementById('newDropDate').value = nowCST;
         };
         
         window.hideAddForm = () => document.getElementById('addForm').style.display = 'none';
 
-        window.updateFormFields = () => {
-            const type = document.getElementById('newType').value;
-            // Could show/hide fields based on type here
-        };
-
         window.addDrop = async () => {
+            const teaserVal = document.getElementById('newTeaserDate').value;
+            const dropVal = document.getElementById('newDropDate').value;
+            
             const drop = {
                 title: document.getElementById('newTitle').value,
                 drop_type: document.getElementById('newType').value,
-                teaser_at: inputToUTC(document.getElementById('newTeaserDate').value),
-                unlock_at: inputToUTC(document.getElementById('newDropDate').value),
-                faction_id: document.getElementById('newFactionId').value || null,
-                card_number: document.getElementById('newCardNumber').value || null,
+                teaser_at: inputToUTC(teaserVal),
+                unlock_at: inputToUTC(dropVal),
                 image_url: document.getElementById('newImage').value,
-                rarity: document.getElementById('newRarity').value || null,
                 blur_level: parseInt(document.getElementById('newBlur').value),
                 sort_order: parseInt(document.getElementById('newOrder').value),
                 description: document.getElementById('newDesc').value,
-                content: document.getElementById('newContent').value,
                 is_visible: true
             };
+            
+            console.log('Creating drop:', drop); // Debug log
             
             const { error } = await createDrop(drop);
             if (error) alert('Error: ' + error.message);
@@ -433,110 +327,6 @@
             }
         };
 
-        // VAULT FUNCTIONS
-        window.filterVault = (faction) => {
-            document.querySelectorAll('#tab-vault .filter-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            loadVault(faction);
-        };
-
-        async function loadVault(faction) {
-            const drops = await getAllDropsAdmin();
-            const vaultDrops = drops.filter(d => d.drop_type === 'vault' && (faction === 'all' || d.faction_id === faction));
-            const container = document.getElementById('vaultList');
-            
-            if (!vaultDrops.length) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No vault cards.</p>';
-                return;
-            }
-            
-            container.innerHTML = vaultDrops.map(drop => renderDropCard(drop)).join('');
-        }
-
-        // FACTION FUNCTIONS
-        async function loadFactions() {
-            factionsData = await getFactions();
-            const container = document.getElementById('factionList');
-            
-            container.innerHTML = factionsData.map(f => `
-                <div class="faction-item" onclick="editFaction('${f.faction_id}')" id="faction-${f.faction_id}">
-                    <h4 class="font-display" style="color: ${f.sigil_color || 'var(--card-beige)'};">${f.name}</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">${f.tagline || 'No tagline set'}</p>
-                    <span class="type-badge">${f.faction_id}</span>
-                </div>
-            `).join('');
-        }
-
-        window.editFaction = async (factionId) => {
-            currentFaction = factionsData.find(f => f.faction_id === factionId);
-            if (!currentFaction) return;
-            
-            document.querySelectorAll('.faction-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(`faction-${factionId}`).classList.add('active');
-            
-            document.getElementById('factionEditor').style.display = 'block';
-            document.getElementById('editingFactionName').textContent = `Edit ${currentFaction.name}`;
-            document.getElementById('editFactionId').value = currentFaction.faction_id;
-            document.getElementById('editFactionTagline').value = currentFaction.tagline || '';
-            document.getElementById('editFactionColor').value = currentFaction.sigil_color || '';
-            document.getElementById('editFactionStory').value = currentFaction.story_content || '';
-            
-            // Load drops for this faction
-            const drops = await getFactionDrops(factionId);
-            const dropsContainer = document.getElementById('factionDropsList');
-            dropsContainer.innerHTML = drops.length ? drops.map(d => renderDropCard(d)).join('') : '<p style="color: var(--text-secondary);">No drops for this faction.</p>';
-        };
-
-        window.saveFaction = async () => {
-            const factionId = document.getElementById('editFactionId').value;
-            const updates = {
-                tagline: document.getElementById('editFactionTagline').value,
-                sigil_color: document.getElementById('editFactionColor').value,
-                story_content: document.getElementById('editFactionStory').value
-            };
-            
-            const { error } = await updateFaction(factionId, updates);
-            if (error) alert('Error: ' + error.message);
-            else {
-                alert('Faction updated!');
-                loadFactions();
-            }
-        };
-
-        window.cancelFactionEdit = () => {
-            document.getElementById('factionEditor').style.display = 'none';
-            document.querySelectorAll('.faction-item').forEach(i => i.classList.remove('active'));
-            currentFaction = null;
-        };
-
-        // WHISPERS FUNCTIONS
-        async function loadWhispers() {
-            const drops = await getAllDropsAdmin();
-            const whispers = drops.filter(d => d.drop_type === 'whisper');
-            const container = document.getElementById('whispersList');
-            
-            if (!whispers.length) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No whispers scheduled.</p>';
-                return;
-            }
-            
-            container.innerHTML = whispers.map(drop => renderDropCard(drop)).join('');
-        }
-
-        // PAGES FUNCTIONS
-        async function loadPages() {
-            const drops = await getAllDropsAdmin();
-            const pages = drops.filter(d => d.drop_type === 'page');
-            const container = document.getElementById('pagesList');
-            
-            if (!pages.length) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No page releases scheduled.</p>';
-                return;
-            }
-            
-            container.innerHTML = pages.map(drop => renderDropCard(drop)).join('');
-        }
-
         window.toggleNav = () => {
             document.getElementById('navLinks').classList.toggle('active');
         };
@@ -544,7 +334,9 @@
         checkAuth();
         
         supabase.auth.onAuthStateChange((event) => {
-            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') checkAuth();
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                checkAuth();
+            }
         });
     </script>
 </body>
