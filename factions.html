@@ -68,36 +68,36 @@
 
         async function loadFactions() {
             const container = document.getElementById('factionsContainer');
-            const factions = await getFactions();
+            const factions = await getDrops('faction'); // Use drops table, not faction_lore
             
             if (!factions || factions.length === 0) {
                 container.innerHTML = '<div class="loading-factions">No factions found.</div>';
                 return;
             }
 
-            // Check which factions have unlocked content
             const { data: { user } } = await supabase.auth.getUser();
             const isAdminUser = user ? await isAdmin() : false;
 
             container.innerHTML = factions.map(faction => {
-                // For now, show all factions but indicate lock status based on drops
-                const hasContent = true; // You can check this against drops
-                const isLocked = !hasContent && !isAdminUser;
-                const isTeaser = false; // Check against teaser dates
+                const status = getDropStatus(faction);
+                const isLocked = status.state === 'locked' && !isAdminUser;
+                const isTeaser = status.state === 'teaser';
                 
                 const lockClass = isLocked ? '' : (isTeaser ? 'teaser' : 'unlocked');
                 const lockDisplay = isLocked ? 'flex' : (isTeaser ? 'flex' : 'none');
                 
-                const unlockDate = '2026-05-01'; // This would come from drops
-                
+                // Format dates for display
+                const teaserDate = faction.teaser_at ? new Date(faction.teaser_at).toLocaleDateString() : 'Soon';
+                const unlockDate = faction.unlock_at ? new Date(faction.unlock_at).toLocaleDateString() : 'Soon';
+
                 return `
-                <a href="faction-detail.html?id=${faction.faction_id}" class="faction-card" data-faction="${faction.faction_id}">
-                    <div class="faction-sigil" style="background: ${faction.sigil_color || 'var(--spirit)'}; border-color: ${faction.sigil_color || 'var(--card-gold)'};"></div>
-                    <span class="faction-name">${faction.name}</span>
-                    <p class="faction-tagline">${faction.tagline || 'Secrets yet to be revealed...'}</p>
+                <a href="faction-detail.html?id=${faction.id}" class="faction-card" data-faction="${faction.id}">
+                    <div class="faction-sigil" style="background: ${faction.image_url || 'var(--spirit)'}; border-color: ${faction.image_url || 'var(--card-gold)'};"></div>
+                    <span class="faction-name">${faction.title}</span>
+                    <p class="faction-tagline">${faction.description || 'Secrets yet to be revealed...'}</p>
                     <div class="faction-lock ${lockClass}" style="display: ${lockDisplay};">
                         <span class="lock-date">
-                            ${isTeaser ? 'Coming Soon<div class="teaser-text">Preview available</div>' : `Sealed until ${unlockDate}`}
+                            ${isTeaser ? `Teaser until ${unlockDate}<div class="teaser-text">Preview available</div>` : `Sealed until ${teaserDate}`}
                         </span>
                     </div>
                 </a>
