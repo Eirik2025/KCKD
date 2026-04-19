@@ -68,4 +68,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateNavbar();
 
     supabase.auth.onAuthStateChange(() => updateNavbar());
+
+    // Mobile nav toggle
+    window.toggleNav = () => {
+        document.getElementById('navLinks').classList.toggle('active');
+    };
+
+    // Mobile dropdown toggle (touch-friendly)
+    document.querySelectorAll('.dropdown > a').forEach(drop => {
+        drop.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                e.preventDefault();
+                drop.parentElement.classList.toggle('active');
+            }
+        });
+    });
 });
