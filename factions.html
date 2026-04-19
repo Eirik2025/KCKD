@@ -5,69 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Thirteen Shadows - K&D</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .faction-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .faction-card { background: var(--bg-secondary); border: 2px solid var(--accent); border-radius: 12px; padding: 2rem 1rem; text-align: center; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
+        .faction-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(96, 54, 170, 0.3); }
+        .faction-sigil { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1rem; border: 3px solid; transition: all 0.3s; }
+        .faction-card:hover .faction-sigil { transform: scale(1.1); }
+        .faction-name { font-family: var(--font-display); font-size: 1.3rem; color: var(--card-beige); }
+        .faction-tagline { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; font-style: italic; }
+        .faction-lock { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 15, 0.9); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); transition: opacity 0.5s; }
+        .faction-lock.unlocked { opacity: 0; pointer-events: none; }
+        .faction-lock.teaser { background: rgba(10, 10, 15, 0.7); }
+        .lock-date { font-family: var(--font-display); color: var(--card-light-purple); font-size: 0.9rem; text-align: center; padding: 1rem; }
+        .teaser-text { color: var(--sun); font-size: 0.8rem; margin-top: 0.5rem; }
+        .loading-factions { text-align: center; padding: 3rem; color: var(--text-secondary); }
+    </style>
 </head>
 <body>
-<nav class="navbar">
-    <a href="index.html" class="logo-link">
-        <div class="logo font-display">Kloak & Daggurrs</div>
-    </a>
-    <a href="index.html" class="nav-logo-right">
-        <img src="assets/logo-icon.png" alt="K&D">
-    </a>
-    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
-    <div class="nav-links" id="navLinks">
-        <div class="dropdown">
-            <a href="factions.html">Factions</a>
-            <div class="dropdown-content">
-                <a href="set-fehu.html">Fehu</a>
-                <a href="set-godrin.html">Coming Soon</a>
+    <nav class="navbar">
+        <a href="index.html" class="logo-link"><div class="logo font-display">Kloak & Daggurrs</div></a>
+        <a href="index.html" class="nav-logo-right"><img src="assets/logo-icon.png" alt="K&D"></a>
+        <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <div class="dropdown">
+                <a href="factions.html">Factions</a>
+                <div class="dropdown-content">
+                    <a href="set-fehu.html">Fehu</a>
+                    <a href="set-godrin.html">Coming Soon</a>
+                </div>
             </div>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="qa.html">Q&A</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
-        <a href="vault.html">Vault</a>
-        <a href="whispers.html">Whispers</a>
-        <a href="qa.html">Q&A</a>
-        <a href="contact.html">Contact</a>
-        <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
-        <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
-    </div>
-</nav>
+    </nav>
 
     <main class="page-content">
         <div class="page-header">
             <h2>The Thirteen Shadows</h2>
             <p style="color: var(--text-secondary);">Power takes many forms. Choose carefully.</p>
         </div>
-        <div class="faction-grid">
-            <!-- Example: Chaos -->
-            <div class="faction-card" data-faction="chaos">
-                <div class="faction-sigil" style="background: var(--chaos-primary); border-color: var(--chaos-secondary);"></div>
-                <span class="faction-name text-chaos">Chaos</span>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Circles of destruction.</p>
-                <div class="faction-lock locked" data-unlock="2026-05-01">
-                    <span class="lock-date">Sealed until May 1st</span>
-                </div>
-            </div>
-            <!-- Add Earth, Fairy, etc. same pattern -->
-            <div class="faction-card" data-faction="earth">
-                <div class="faction-sigil" style="background: var(--earth); border-color: #5a3a2a;"></div>
-                <span class="faction-name" style="color: var(--earth);">Earth</span>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Unyielding stone.</p>
-                <div class="faction-lock locked" data-unlock="2026-05-15">
-                    <span class="lock-date">Sealed until May 15th</span>
-                </div>
-            </div>
-            <!-- Add remaining factions... -->
-            <div class="faction-card locked-faction" data-faction="mystery">
-                <div class="faction-sigil unknown"></div>
-                <span class="faction-name">???</span>
-                <div class="faction-lock locked">
-                    <span class="lock-date">Unknown</span>
-                </div>
-            </div>
+        
+        <div id="factionsContainer" class="faction-grid">
+            <div class="loading-factions">Summoning factions...</div>
         </div>
     </main>
 
@@ -76,6 +63,54 @@
         <span>All secrets have a price.</span>
     </footer>
 
+    <script type="module">
+        import { getFactions, getFactionDrops, isAdmin, supabase } from './js/supabase.js';
+
+        async function loadFactions() {
+            const container = document.getElementById('factionsContainer');
+            const factions = await getFactions();
+            
+            if (!factions || factions.length === 0) {
+                container.innerHTML = '<div class="loading-factions">No factions found.</div>';
+                return;
+            }
+
+            // Check which factions have unlocked content
+            const { data: { user } } = await supabase.auth.getUser();
+            const isAdminUser = user ? await isAdmin() : false;
+
+            container.innerHTML = factions.map(faction => {
+                // For now, show all factions but indicate lock status based on drops
+                const hasContent = true; // You can check this against drops
+                const isLocked = !hasContent && !isAdminUser;
+                const isTeaser = false; // Check against teaser dates
+                
+                const lockClass = isLocked ? '' : (isTeaser ? 'teaser' : 'unlocked');
+                const lockDisplay = isLocked ? 'flex' : (isTeaser ? 'flex' : 'none');
+                
+                const unlockDate = '2026-05-01'; // This would come from drops
+                
+                return `
+                <a href="faction-detail.html?id=${faction.faction_id}" class="faction-card" data-faction="${faction.faction_id}">
+                    <div class="faction-sigil" style="background: ${faction.sigil_color || 'var(--spirit)'}; border-color: ${faction.sigil_color || 'var(--card-gold)'};"></div>
+                    <span class="faction-name">${faction.name}</span>
+                    <p class="faction-tagline">${faction.tagline || 'Secrets yet to be revealed...'}</p>
+                    <div class="faction-lock ${lockClass}" style="display: ${lockDisplay};">
+                        <span class="lock-date">
+                            ${isTeaser ? 'Coming Soon<div class="teaser-text">Preview available</div>' : `Sealed until ${unlockDate}`}
+                        </span>
+                    </div>
+                </a>
+                `;
+            }).join('');
+        }
+
+        window.toggleNav = () => {
+            document.getElementById('navLinks').classList.toggle('active');
+        };
+
+        loadFactions();
+    </script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
