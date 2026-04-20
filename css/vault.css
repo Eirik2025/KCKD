@@ -1,0 +1,39 @@
+.vault-page {
+    background: var(--bg-primary);
+}
+
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.vault-slot.locked {
+    border-color: var(--card-purple);
+}
+
+.vault-slot.unlocked {
+    border-color: var(--fungus);
+    box-shadow: 0 0 20px rgba(5, 124, 0, 0.3);
+}
+
+.vault-slot.teaser {
+    border-color: var(--sun);
+    box-shadow: 0 0 15px rgba(255, 141, 0, 0.2);
+}
+
+/* Mobile */
+@media (max-width: 1023px) {
+    .vault-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .vault-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

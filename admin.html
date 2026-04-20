@@ -8,24 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/admin.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .admin-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
-        .drop-card { background: var(--bg-secondary); border: 1px solid var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
-        .btn-save { background: var(--fungus); color: white; border: none; padding: 0.75rem 1.5rem; cursor: pointer; font-family: var(--font-display); }
-        .btn-delete { background: var(--lava); color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; }
-        .btn-add { background: var(--ocean); color: white; border: none; padding: 1rem 2rem; cursor: pointer; font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 2rem; }
-        .status-badge { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; margin-left: 0.5rem; }
-        .status-locked { background: var(--lava); }
-        .status-unlocked { background: var(--fungus); }
-        .status-hidden { background: var(--spirit); }
-        .status-teaser { background: var(--sun); color: black; }
-        .loading { color: var(--text-secondary); font-style: italic; }
-        .error { color: var(--lava); }
-        .timezone-note { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem; font-style: italic; }
-        .date-display { color: var(--card-beige); font-size: 0.9rem; margin-top: 0.25rem; }
-    </style>
 </head>
 <body>
     <nav class="navbar admin-nav">
@@ -40,13 +24,15 @@
             <div class="dropdown">
                 <a href="factions.html">Factions</a>
                 <div class="dropdown-content">
+                    <a href="factions.html">All Factions</a>
                     <a href="set-fehu.html">Fehu</a>
-                    <a href="set-godrin.html">Coming Soon</a>
+                    <a href="set-godrin.html">Godrin</a>
+                    <a href="set-braided.html">Braided</a>
                 </div>
             </div>
             <a href="vault.html">Vault</a>
             <a href="whispers.html">Whispers</a>
-            <a href="qa.html">Q&A</a>
+            <a href="learn-to-play.html">Learn to Play</a>
             <a href="contact.html">Contact</a>
             <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
             <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
@@ -84,13 +70,14 @@
             <div id="addForm" style="display: none; background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--accent);">
                 <h3 class="font-display">New Drop</h3>
                 <div class="form-grid">
-                    <input type="text" id="newTitle" placeholder="Title">
+                    <input type="text" id="newTitle" placeholder="Title (e.g., Fehu, Godrin, Card #001)">
                     <select id="newType">
                         <option value="faction">Faction</option>
                         <option value="vault">Vault Card</option>
                         <option value="timeline">Timeline Event</option>
                         <option value="hero">Hero Section</option>
-                        <option value="page">Page Release</option>
+                        <option value="page">Page Release (Set Pages)</option>
+                        <option value="whisper">Whisper</option>
                     </select>
                     <div style="grid-column: span 2;">
                         <label style="color: var(--text-secondary); font-size: 0.9rem;">Teaser Date (CST) - When preview appears:</label>
@@ -101,10 +88,11 @@
                         <label style="color: var(--text-secondary); font-size: 0.9rem;">Official Drop Date (CST) - When fully unlocked:</label>
                         <input type="datetime-local" id="newDropDate">
                     </div>
-                    <input type="text" id="newImage" placeholder="Image path" value="assets/cards/card-back.png">
+                    <input type="text" id="newImage" placeholder="Image path or hex color (#8B4513)" value="assets/cards/card-back.png">
                     <input type="number" id="newBlur" placeholder="Blur px" value="8">
                     <input type="number" id="newOrder" placeholder="Sort Order" value="0">
-                    <textarea id="newDesc" placeholder="Description" style="grid-column: span 2;"></textarea>
+                    <textarea id="newDesc" placeholder="Description / Lore / Tagline" style="grid-column: span 2;" rows="4"></textarea>
+                    <textarea id="newStory" placeholder="Full Story Content (HTML supported)" style="grid-column: span 2;" rows="6"></textarea>
                 </div>
                 <button onclick="addDrop()" class="btn-save" style="margin-top: 1rem;">Create Drop</button>
                 <button onclick="hideAddForm()" style="margin-left: 1rem;">Cancel</button>
@@ -216,7 +204,6 @@
             
             container.innerHTML = drops.map(drop => {
                 const status = getStatus(drop);
-                const now = new Date();
                 
                 return `
                 <div class="drop-card" data-id="${drop.id}">
@@ -232,6 +219,7 @@
                             <option value="timeline" ${drop.drop_type === 'timeline' ? 'selected' : ''}>Timeline</option>
                             <option value="hero" ${drop.drop_type === 'hero' ? 'selected' : ''}>Hero</option>
                             <option value="page" ${drop.drop_type === 'page' ? 'selected' : ''}>Page Release</option>
+                            <option value="whisper" ${drop.drop_type === 'whisper' ? 'selected' : ''}>Whisper</option>
                         </select>
                         <div style="grid-column: span 2;">
                             <label style="color: var(--text-secondary); font-size: 0.85rem;">Teaser Date (CST):</label>
@@ -243,13 +231,14 @@
                             <input type="datetime-local" class="edit-date" value="${drop.unlock_at ? formatForDateTimeLocal(new Date(drop.unlock_at)) : ''}">
                             <div class="date-display">Current: ${drop.unlock_at ? formatDisplayDate(drop.unlock_at) : 'Not set'}</div>
                         </div>
-                        <input type="text" class="edit-image" value="${drop.image_url || ''}">
+                        <input type="text" class="edit-image" value="${drop.image_url || ''}" placeholder="Image path or hex color">
                         <input type="number" class="edit-blur" value="${drop.blur_level || 0}">
                         <input type="number" class="edit-order" value="${drop.sort_order || 0}">
                         <label style="grid-column: span 2;">
                             <input type="checkbox" class="edit-visible" ${drop.is_visible ? 'checked' : ''}> Visible on site
                         </label>
-                        <textarea class="edit-desc" style="grid-column: span 2;">${drop.description || ''}</textarea>
+                        <textarea class="edit-desc" style="grid-column: span 2;" rows="3" placeholder="Description / Tagline">${drop.description || ''}</textarea>
+                        <textarea class="edit-story" style="grid-column: span 2;" rows="4" placeholder="Full Story Content (HTML)">${drop.story_content || ''}</textarea>
                     </div>
                     <button onclick="saveThis('${drop.id}')" class="btn-save" style="margin-top: 1rem;">Save Changes</button>
                 </div>
@@ -271,10 +260,11 @@
                 blur_level: parseInt(card.querySelector('.edit-blur').value),
                 sort_order: parseInt(card.querySelector('.edit-order').value),
                 is_visible: card.querySelector('.edit-visible').checked,
-                description: card.querySelector('.edit-desc').value
+                description: card.querySelector('.edit-desc').value,
+                story_content: card.querySelector('.edit-story').value
             };
             
-            console.log('Saving updates:', updates); // Debug log
+            console.log('Saving updates:', updates);
             
             const { error } = await updateDrop(id, updates);
             if (error) alert('Error: ' + error.message);
@@ -293,7 +283,6 @@
 
         window.showAddForm = () => {
             document.getElementById('addForm').style.display = 'block';
-            // Set default dates to now in CST
             const nowCST = formatForDateTimeLocal(nowInCST());
             document.getElementById('newTeaserDate').value = nowCST;
             document.getElementById('newDropDate').value = nowCST;
@@ -314,10 +303,11 @@
                 blur_level: parseInt(document.getElementById('newBlur').value),
                 sort_order: parseInt(document.getElementById('newOrder').value),
                 description: document.getElementById('newDesc').value,
+                story_content: document.getElementById('newStory').value,
                 is_visible: true
             };
             
-            console.log('Creating drop:', drop); // Debug log
+            console.log('Creating drop:', drop);
             
             const { error } = await createDrop(drop);
             if (error) alert('Error: ' + error.message);

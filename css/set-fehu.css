@@ -1,0 +1,66 @@
+[data-set="fehu"] {
+    background: linear-gradient(180deg, #0f0d0b 0%, var(--bg-primary) 400px);
+}
+
+[data-set="fehu"] .set-title {
+    font-family: 'Metamorphous', serif;
+    color: #8B4513;
+    text-shadow: 0 0 25px rgba(139, 69, 19, 0.4);
+}
+
+[data-set="fehu"] .set-tagline {
+    color: #A0522D;
+}
+
+[data-set="fehu"] .set-progress {
+    color: #8B4513;
+    border-color: #4A4A4A;
+}
+
+[data-set="fehu"] .story-text::first-letter {
+    color: #8B4513;
+}
+
+[data-set="fehu"] .navbar {
+    border-bottom-color: #4A4A4A;
+}
+
+[data-set="fehu"] .section-title {
+    font-family: 'Metamorphous', serif;
+    color: #8B4513;
+}
+
+[data-set="fehu"] .seal-sigil {
+    border-color: #8B4513;
+    animation: pulse-fehu 4s infinite;
+}
+
+@keyframes pulse-fehu {
+    0%, 100% { box-shadow: 0 0 30px rgba(139, 69, 19, 0.15); }
+    50% { box-shadow: 0 0 50px rgba(139, 69, 19, 0.35); }
+}
+
+[data-set="fehu"] .seal-sigil span {
+    color: #8B4513;
+}
+
+[data-set="fehu"] .locked-title {
+    color: #8B4513;
+}
+
+[data-set="fehu"] .lock-timer {
+    color: #A0522D;
+}
+
+[data-set="fehu"] .teaser-content {
+    border-color: #8B4513;
+    background: rgba(139, 69, 19, 0.05);
+}
+
+[data-set="fehu"] .teaser-timer {
+    color: #8B4513;
+}
+
+[data-set="fehu"] .progress-bar {
+    background: #8B4513;
+}

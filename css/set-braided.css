@@ -1,0 +1,67 @@
+[data-set="braided"] {
+    background: linear-gradient(180deg, #0a0a12 0%, var(--bg-primary) 400px);
+}
+
+[data-set="braided"] .set-title {
+    font-family: 'Cormorant SC', serif;
+    color: #00E3FF;
+    text-shadow: 0 0 30px rgba(0, 227, 255, 0.25);
+}
+
+[data-set="braided"] .set-tagline {
+    color: #88d8e8;
+}
+
+[data-set="braided"] .set-progress {
+    color: #00E3FF;
+    border-color: #00E3FF;
+    background: rgba(0, 227, 255, 0.05);
+}
+
+[data-set="braided"] .story-text::first-letter {
+    color: #00E3FF;
+}
+
+[data-set="braided"] .navbar {
+    border-bottom-color: #00E3FF;
+}
+
+[data-set="braided"] .section-title {
+    font-family: 'Cormorant SC', serif;
+    color: #00E3FF;
+}
+
+[data-set="braided"] .seal-sigil {
+    border-color: #00E3FF;
+    animation: pulse-braided 4s infinite;
+}
+
+@keyframes pulse-braided {
+    0%, 100% { box-shadow: 0 0 30px rgba(0, 227, 255, 0.15); }
+    50% { box-shadow: 0 0 50px rgba(0, 227, 255, 0.35); }
+}
+
+[data-set="braided"] .seal-sigil span {
+    color: #00E3FF;
+}
+
+[data-set="braided"] .locked-title {
+    color: #00E3FF;
+}
+
+[data-set="braided"] .lock-timer {
+    color: #00E3FF;
+}
+
+[data-set="braided"] .teaser-content {
+    border-color: #00E3FF;
+    background: rgba(0, 227, 255, 0.05);
+}
+
+[data-set="braided"] .teaser-timer {
+    color: #00E3FF;
+}
+
+[data-set="braided"] .progress-bar {
+    background: #00E3FF;
+}

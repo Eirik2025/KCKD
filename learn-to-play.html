@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn to Play - K&D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/learn-to-play.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="learn-page">
+    <nav class="navbar">
+        <a href="index.html" class="logo-link">
+            <div class="logo font-display">Kloak & Daggurrs</div>
+        </a>
+        <a href="index.html" class="nav-logo-right">
+            <img src="assets/logo-icon.png" alt="K&D">
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <div class="dropdown">
+                <a href="factions.html">Factions</a>
+                <div class="dropdown-content">
+                    <a href="factions.html">All Factions</a>
+                    <a href="set-fehu.html">Fehu</a>
+                    <a href="set-godrin.html">Godrin</a>
+                    <a href="set-braided.html">Braided</a>
+                </div>
+            </div>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="learn-to-play.html">Learn to Play</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h2>Learn to Play</h2>
+            <p style="color: var(--text-secondary);">Master the shadows. Know the rules.</p>
+        </div>
+
+        <div class="tutorial-nav">
+            <button data-target="basics" class="active">Basics</button>
+            <button data-target="setup">Setup</button>
+            <button data-target="turns">Turn Structure</button>
+            <button data-target="cards">Card Types</button>
+            <button data-target="combat">Combat</button>
+            <button data-target="crossgame">Cross-Game Usage</button>
+        </div>
+
+        <!-- BASICS -->
+        <section id="basics" class="tutorial-section">
+            <h3>The Basics</h3>
+            <p>Kloak & Daggurrs: Klandestine is a game of hidden allegiances, strategic deception, and calculated betrayal. Each player secretly belongs to one of thirteen factions, each with unique abilities and win conditions.</p>
+            
+            <h4>Objective</h4>
+            <p>Be the last faction standing, or fulfill your faction's secret victory condition before the others catch on.</p>
+            
+            <h4>What You Need</h4>
+            <ul>
+                <li>1 deck of K&D cards (120 cards)</li>
+                <li>3-6 players</li>
+                <li>1 faction token per player (hidden)</li>
+                <li>20-30 minutes per game</li>
+            </ul>
+            
+            <img src="assets/tutorial/table-setup.jpg" alt="Table setup example" onerror="this.style.display='none'">
+        </section>
+
+        <!-- SETUP -->
+        <section id="setup" class="tutorial-section">
+            <h3>Game Setup</h3>
+            <ol>
+                <li>Shuffle the deck thoroughly.</li>
+                <li>Each player draws 5 cards.</li>
+                <li>Each player secretly draws 1 faction card and keeps it hidden.</li>
+                <li>Place the remaining deck in the center.</li>
+                <li>Choose a starting player randomly.</li>
+            </ol>
+            
+            <h4>Faction Setup</h4>
+            <p>Your faction determines your special ability and your secret win condition. Never reveal your faction unless a card effect forces you to.</p>
+            
+            <video controls poster="assets/tutorial/setup-thumb.jpg" onerror="this.style.display='none'">
+                <source src="assets/tutorial/setup-video.mp4" type="video/mp4">
+            </video>
+        </section>
+
+        <!-- TURNS -->
+        <section id="turns" class="tutorial-section">
+            <h3>Turn Structure</h3>
+            <p>Each turn consists of three phases:</p>
+            
+            <h4>1. Draw Phase</h4>
+            <p>Draw 2 cards from the deck. If the deck is empty, shuffle the discard pile.</p>
+            
+            <h4>2. Action Phase</h4>
+            <p>Play up to 2 cards from your hand. Cards can be:</p>
+            <ul>
+                <li><strong>Played face-up:</strong> Immediate effect resolves.</li>
+                <li><strong>Played face-down:</strong> Placed as a "Kloak" — a hidden trap or bluff.</li>
+                <li><strong>Discarded:</strong> Draw 1 replacement card.</li>
+            </ul>
+            
+            <h4>3. End Phase</h4>
+            <p>Max hand size is 7. Discard down if needed. Pass turn clockwise.</p>
+        </section>
+
+        <!-- CARD TYPES -->
+        <section id="cards" class="tutorial-section">
+            <h3>Card Types</h3>
+            
+            <h4>Common Cards</h4>
+            <p>Basic actions: Draw, Discard, Block. The foundation of every hand.</p>
+            <div class="card-example rarity-common"></div>
+            
+            <h4>Uncommon Cards</h4>
+            <p>Utility effects: Peek at a Kloak, force a discard, swap hands.</p>
+            <div class="card-example rarity-uncommon"></div>
+            
+            <h4>Rare Cards</h4>
+            <p>Powerful one-time effects: Steal a Kloak, reveal a faction, nullify an action.</p>
+            <div class="card-example rarity-rare"></div>
+            
+            <h4>Mythic Cards</h4>
+            <p>Game-changing abilities: Reset the board, force all players to reveal, swap factions.</p>
+            <div class="card-example rarity-mythic"></div>
+            
+            <h4>Gold Cards</h4>
+            <p>Faction-specific ultimates. Only usable if you control the matching faction. Devastating when played correctly.</p>
+            <div class="card-example rarity-gold"></div>
+        </section>
+
+        <!-- COMBAT -->
+        <section id="combat" class="tutorial-section">
+            <h3>Combat & Kloaks</h3>
+            <p>When a player attacks another, the defender may flip a face-down Kloak card. The Kloak's hidden effect resolves immediately — this could block the attack, redirect it, or trigger a trap.</p>
+            
+            <h4>Resolving Kloaks</h4>
+            <ol>
+                <li>Attacker declares target.</li>
+                <li>Defender chooses to flip 0, 1, or 2 Kloaks.</li>
+                <li>Kloak effects resolve in order played.</li>
+                <li>If attack still valid, damage is dealt.</li>
+                <li>Flipped Kloaks go to discard.</li>
+            </ol>
+            
+            <h4>Bluffing</h4>
+            <p>You can play any card face-down as a Kloak — even a Common. The threat is often more powerful than the card itself.</p>
+        </section>
+
+        <!-- CROSS-GAME -->
+        <section id="crossgame" class="tutorial-section">
+            <h3>Cross-Game Usage</h3>
+            <p>K&D cards are designed to be modular. Use them as:</p>
+            
+            <h4>Magic: The Gathering — Commander Tokens</h4>
+            <p>Gold cards make excellent custom commander representations. Their faction abilities map well to commander color identities.</p>
+            
+            <h4>D&D — Spell Cards & NPC Factions</h4>
+            <p>Use the thirteen factions as rival guilds in your campaign. Card effects translate directly to encounter abilities.</p>
+            
+            <h4>Board Games — Event Deck</h4>
+            <p>Shuffle K&D cards into any game's event deck. The rarity system balances randomness.</p>
+            
+            <h4>Custom Formats</h4>
+            <p>Build your own formats. Some community favorites:</p>
+            <ul>
+                <li><strong>Kloak Only:</strong> All cards played face-down. Pure bluffing.</li>
+                <li><strong>Faction Wars:</strong> Players openly play their faction. No secrets.</li>
+                <li><strong>Solitaire:</strong> Survive 20 turns against an automated "Shadow" deck.</li>
+            </ul>
+            
+            <img src="assets/tutorial/cross-game.jpg" alt="Cross game examples" onerror="this.style.display='none'">
+        </section>
+    </main>
+
+    <footer>
+        <p class="font-display">Kloak & Daggurrs</p>
+        <span>All secrets have a price.</span>
+    </footer>
+
+    <script type="module" src="js/app.js"></script>
+    <script type="module">
+        import { initLearnPage } from './js/learn-to-play.js';
+        initLearnPage();
+    </script>
+</body>
+</html>

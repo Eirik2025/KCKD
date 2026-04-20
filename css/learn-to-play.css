@@ -1,0 +1,112 @@
+.learn-page {
+    background: var(--bg-primary);
+}
+
+.tutorial-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.tutorial-nav button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+}
+
+.tutorial-nav button.active {
+    background: var(--card-purple);
+    border-color: var(--card-purple);
+}
+
+.tutorial-section {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.tutorial-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tutorial-section h3 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--card-lavender);
+    margin-bottom: 1.5rem;
+}
+
+.tutorial-section h4 {
+    font-family: var(--font-display);
+    color: var(--card-beige);
+    margin: 2rem 0 1rem;
+}
+
+.tutorial-section p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.8;
+}
+
+.tutorial-section img,
+.tutorial-section video {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    border: 2px solid var(--accent);
+}
+
+.tutorial-section ul,
+.tutorial-section ol {
+    color: var(--text-secondary);
+    margin: 1rem 0 1rem 2rem;
+    line-height: 1.8;
+}
+
+.tutorial-section li {
+    margin-bottom: 0.5rem;
+}
+
+.card-example {
+    display: inline-block;
+    width: 200px;
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--card-deep-purple), var(--card-mid-purple));
+    border-radius: 10px;
+    border: 2px solid var(--card-purple);
+    margin: 1rem;
+    position: relative;
+}
+
+.card-example::after {
+    content: 'Example';
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    color: var(--card-beige);
+}
+
+/* Mobile */
+@media (max-width: 1023px) {
+    .tutorial-nav {
+        gap: 0.5rem;
+    }
+    
+    .tutorial-nav button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}

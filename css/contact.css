@@ -1,0 +1,68 @@
+.contact-page {
+    background: var(--bg-primary);
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto 4rem;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+    margin-bottom: 1rem;
+}
+
+.contact-form button {
+    width: 100%;
+}
+
+/* Q&A Section */
+.qa-section {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+}
+
+.qa-section h3 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--card-lavender);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.qa-list {
+    margin-bottom: 2rem;
+}
+
+.qa-item {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    margin-bottom: 1rem;
+}
+
+.qa-q {
+    font-family: var(--font-display);
+    color: var(--card-light-purple);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.qa-a {
+    color: var(--text-secondary);
+}
+
+.ask-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.ask-form input {
+    margin-bottom: 1rem;
+}
+
+.ask-form button {
+    width: 100%;
+}

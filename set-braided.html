@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>braided - Kloak & Daggurrs</title>
+    <title>Braided - Kloak & Daggurrs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/locks.css">
+    <link rel="stylesheet" href="css/set-braided.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body data-set="braided">
@@ -26,60 +28,61 @@
             <div class="dropdown">
                 <a href="factions.html">Factions</a>
                 <div class="dropdown-content">
+                    <a href="factions.html">All Factions</a>
                     <a href="set-fehu.html">Fehu</a>
-                    <a href="set-godrin.html">Coming Soon</a>
-                    <a href="set-braided.html">Coming Soon</a>
+                    <a href="set-godrin.html">Godrin</a>
+                    <a href="set-braided.html">Braided</a>
                 </div>
             </div>
             <a href="vault.html">Vault</a>
             <a href="whispers.html">Whispers</a>
-            <a href="qa.html">Q&A</a>
+            <a href="learn-to-play.html">Learn to Play</a>
             <a href="contact.html">Contact</a>
             <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
             <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
     </nav>
 
-    <!-- LOCKED VIEW (Default) -->
-    <div class="braided-locked-view" id="braidedLocked">
+    <!-- LOCKED VIEW -->
+    <div class="locked-view" id="braidedLocked">
         <div class="seal-sigil"><span>&#10067;</span></div>
-        <h1 class="braided-locked-title">braided</h1>
-        <div class="braided-lock-timer" id="braidedTimer">Calculating...</div>
-        <div class="braided-lock-date" id="braidedLockDate">Sealed until further notice</div>
+        <h1 class="locked-title">Braided</h1>
+        <div class="lock-timer" id="braidedTimer">Calculating...</div>
+        <div class="lock-date" id="braidedLockDate">Sealed until further notice</div>
     </div>
 
-    <!-- TEASER VIEW (Preview/Coming Soon) -->
-    <div class="braided-teaser-view" id="braidedTeaser" style="display: none;">
+    <!-- TEASER VIEW -->
+    <div class="teaser-view" id="braidedTeaser">
         <div class="teaser-content">
-            <div class="seal-sigil" style="border-color: var(--sun); animation: pulse-gold 2s infinite;">
-                <span style="color: var(--sun);">&#9733;</span>
+            <div class="seal-sigil" style="animation: pulse-braided 2s infinite;">
+                <span style="color: #00E3FF;">&#9733;</span>
             </div>
-            <h1 class="braided-locked-title" style="color: var(--sun); opacity: 0.6; filter: blur(1px);">braided</h1>
-            <p class="teaser-text">Something stirs in the cathedral...</p>
-            <div class="braided-lock-timer" id="braidedTeaserTimer">Arriving soon</div>
+            <h1 class="locked-title" style="color: #00E3FF; opacity: 0.6; filter: blur(1px);">Braided</h1>
+            <p class="teaser-text">Threads of fate intertwine. The weave grows stronger.</p>
+            <div class="teaser-timer" id="braidedTeaserTimer">Arriving soon</div>
             <div class="teaser-progress">
                 <div class="progress-bar" id="teaserProgress"></div>
             </div>
         </div>
     </div>
 
-    <!-- UNLOCKED VIEW (Admin or Post-Drop) -->
-    <div class="braided-unlocked-view" id="braidedUnlocked">
+    <!-- UNLOCKED VIEW -->
+    <div class="unlocked-view" id="braidedUnlocked">
         <header class="set-hero">
-            <h1 class="set-title">braided</h1>
-            <p class="set-tagline">The throne does not empty. It simply waits for a worthier claim.</p>
+            <h1 class="set-title">Braided</h1>
+            <p class="set-tagline">Every thread has two ends. Pull carefully.</p>
             <div class="set-progress" id="braidedProgress">0/120 Uncovered</div>
         </header>
 
         <main class="page-content">
             <section style="margin-bottom: 5rem;">
-                <h2 class="section-title">The Empty Throne</h2>
+                <h2 class="section-title">The Loom of Fate</h2>
                 <div class="story-text">
-                    <p>They say the braided built their cathedral in a single night, not with stone but with oaths. Every pillar is a promise. Every window, a vow. To stand inside is to feel the weight of every believer who ever knelt.</p>
+                    <p>The Braided do not see time as a river. They see it as a tapestry—each life a thread, each choice a knot. To them, prophecy is not prediction. It is reading the pattern that already exists.</p>
                     
-                    <p>But the throne sits empty. Has sat empty for three hundred years. Not because no one has tried to claim it—because the seat itself refuses the unworthy.</p>
+                    <p>Their seers go mad young. The human mind was not meant to perceive so many threads at once. Those who survive the madness become Oracles, and their word is law among the Braided.</p>
                     
-                    <p>The Gold Cards are not given. They are survived.</p>
+                    <p>But even they cannot see where their own threads lead.</p>
                 </div>
             </section>
 
@@ -116,141 +119,10 @@
         <span>All secrets have a price.</span>
     </footer>
 
-    <script type="module">
-        import { supabase, getTeasers, nowInCST } from './js/supabase.js';
-
-        const SB_URL = 'https://onevrczdmrjfupclmwgf.supabase.co';
-        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9uZXZyY3pkbXJqZnVwY2xtd2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDA4OTgsImV4cCI6MjA5MjAxNjg5OH0.hs92vcRitu5QeJR6dSMcDLxWCS193ULm1yMchRR_psk';
-
-        // REPLACE the initbraided function in set-braided.html:
-        async function initbraided() {
-            const client = supabase || window.supabase.createClient(SB_URL, SB_KEY);
-            const now = new Date(); // UTC now
-            
-            // Get braided drop from database
-            const { data: drop, error } = await client
-                .from('drops')
-                .select('*')
-                .eq('drop_type', 'page')
-                .ilike('title', '%braided%')
-                .single();
-
-            if (error) {
-                console.error('Error fetching braided drop:', error);
-            }
-
-            console.log('braided drop data:', drop); // Debug
-            console.log('Current time (UTC):', now.toISOString());
-
-            let teaserAt = drop?.teaser_at ? new Date(drop.teaser_at) : null;
-            let unlockAt = drop?.unlock_at ? new Date(drop.unlock_at) : null;
-            
-            console.log('Teaser at:', teaserAt?.toISOString());
-            console.log('Unlock at:', unlockAt?.toISOString());
-            
-            const { data: { user } } = await client.auth.getUser();
-            let isAdminUser = false;
-            
-            if (user) {
-                const { data } = await client.from('profiles').select('is_admin').eq('id', user.id).single();
-                isAdminUser = data?.is_admin || false;
-            }
-            
-            // Determine state using UTC comparison
-            let state = 'locked';
-            if (isAdminUser || (unlockAt && now >= unlockAt)) {
-                state = 'unlocked';
-            } else if (teaserAt && now >= teaserAt && unlockAt && now < unlockAt) {
-                state = 'teaser';
-            }
-            
-            console.log('Current state:', state); // Debug
-
-            // Hide all views first
-            document.getElementById('braidedLocked').style.display = 'none';
-            document.getElementById('braidedTeaser').style.display = 'none';
-            document.getElementById('braidedUnlocked').style.display = 'none';
-
-            // Show appropriate view
-            if (state === 'unlocked') {
-                document.getElementById('braidedUnlocked').style.display = 'block';
-                if (isAdminUser && unlockAt && now < unlockAt) {
-                    document.getElementById('adminPreviewBadge').style.display = 'block';
-                }
-            } else if (state === 'teaser') {
-                document.getElementById('braidedTeaser').style.display = 'flex';
-                startTeaserCountdown(unlockAt);
-            } else {
-                document.getElementById('braidedLocked').style.display = 'flex';
-                startLockedCountdown(teaserAt || unlockAt);
-            }
-        }
-
-        function startLockedCountdown(target) {
-            const el = document.getElementById('braidedTimer');
-            const dateEl = document.getElementById('braidedLockDate');
-            
-            if (!target) {
-                el.textContent = 'Coming Soon';
-                return;
-            }
-            
-            dateEl.textContent = 'Sealed until ' + target.toLocaleString('en-US', {
-                timeZone: 'America/Chicago',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            }) + ' CST';
-
-            const tick = () => {
-                const diff = target - nowInCST();
-                if (diff <= 0) { location.reload(); return; }
-                const d = Math.floor(diff / 86400000);
-                const h = Math.floor((diff % 86400000) / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                el.textContent = `${d}d ${h}h ${m}m`;
-            };
-            
-            tick();
-            setInterval(tick, 60000);
-        }
-
-        function startTeaserCountdown(target) {
-            const el = document.getElementById('braidedTeaserTimer');
-            const progress = document.getElementById('teaserProgress');
-            
-            if (!target) return;
-
-            const tick = () => {
-                const now = nowInCST();
-                const diff = target - now;
-                if (diff <= 0) { location.reload(); return; }
-                
-                const d = Math.floor(diff / 86400000);
-                const h = Math.floor((diff % 86400000) / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                el.textContent = `Official drop in ${d}d ${h}h ${m}m`;
-                
-                // Progress bar animation
-                const total = target - (target - 7 * 86400000); // Assume 7 day teaser window
-                const elapsed = now - (target - 7 * 86400000);
-                const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-                if (progress) progress.style.width = pct + '%';
-            };
-            
-            tick();
-            setInterval(tick, 60000);
-        }
-
-        window.toggleNav = () => {
-            document.getElementById('navLinks').classList.toggle('active');
-        };
-
-        initbraided();
-    </script>
     <script type="module" src="js/app.js"></script>
+    <script type="module">
+        import { initSetPage } from './js/set-pages.js';
+        initSetPage('Braided');
+    </script>
 </body>
 </html>

@@ -1,0 +1,67 @@
+[data-set="godrin"] {
+    background: linear-gradient(180deg, #0f0f0f 0%, var(--bg-primary) 400px);
+}
+
+[data-set="godrin"] .set-title {
+    font-family: 'Cormorant SC', serif;
+    color: #FFD700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.25);
+}
+
+[data-set="godrin"] .set-tagline {
+    color: #C0C0C0;
+}
+
+[data-set="godrin"] .set-progress {
+    color: #FFD700;
+    border-color: #FFD700;
+    background: rgba(255, 215, 0, 0.05);
+}
+
+[data-set="godrin"] .story-text::first-letter {
+    color: #FFD700;
+}
+
+[data-set="godrin"] .navbar {
+    border-bottom-color: #FFD700;
+}
+
+[data-set="godrin"] .section-title {
+    font-family: 'Cormorant SC', serif;
+    color: #FFD700;
+}
+
+[data-set="godrin"] .seal-sigil {
+    border-color: #FFD700;
+    animation: pulse-gold 4s infinite;
+}
+
+@keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.15); }
+    50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.35); }
+}
+
+[data-set="godrin"] .seal-sigil span {
+    color: #FFD700;
+}
+
+[data-set="godrin"] .locked-title {
+    color: #FFD700;
+}
+
+[data-set="godrin"] .lock-timer {
+    color: #FFD700;
+}
+
+[data-set="godrin"] .teaser-content {
+    border-color: var(--sun);
+    background: rgba(255, 215, 0, 0.05);
+}
+
+[data-set="godrin"] .teaser-timer {
+    color: var(--sun);
+}
+
+[data-set="godrin"] .progress-bar {
+    background: var(--sun);
+}

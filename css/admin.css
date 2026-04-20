@@ -1,0 +1,72 @@
+.admin-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.drop-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.btn-save {
+    background: var(--fungus);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-family: var(--font-display);
+}
+
+.btn-delete {
+    background: var(--lava);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.btn-add {
+    background: var(--ocean);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.timezone-note {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.date-display {
+    color: var(--card-beige);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* Mobile */
+@media (max-width: 1023px) {
+    .admin-container {
+        padding: 0 1rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

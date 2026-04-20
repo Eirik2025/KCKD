@@ -1,0 +1,210 @@
+/* ---------- LOCKED STATE ---------- */
+.locked-view {
+    display: flex;
+    min-height: 70vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.seal-sigil {
+    width: 120px;
+    height: 120px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 30px rgba(96, 54, 170, 0.15);
+    animation: pulse-seal 4s infinite;
+}
+
+@keyframes pulse-seal {
+    0%, 100% { box-shadow: 0 0 30px rgba(96, 54, 170, 0.15); }
+    50% { box-shadow: 0 0 50px rgba(96, 54, 170, 0.35); }
+}
+
+.seal-sigil span {
+    font-size: 3rem;
+    color: var(--accent);
+}
+
+.locked-title {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    opacity: 0.2;
+    filter: blur(3px);
+    margin-bottom: 1rem;
+    user-select: none;
+}
+
+.lock-timer {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--card-beige);
+    margin-bottom: 0.5rem;
+}
+
+.lock-date {
+    font-family: 'Josefin Sans', sans-serif;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* ---------- TEASER STATE ---------- */
+.teaser-view {
+    display: none;
+    min-height: 70vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.teaser-content {
+    padding: 3rem;
+    border: 1px solid var(--sun);
+    border-radius: 16px;
+    background: rgba(255, 215, 0, 0.05);
+    max-width: 500px;
+    width: 90%;
+}
+
+.teaser-text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 1.2rem;
+    color: var(--card-beige);
+    margin: 1.5rem 0;
+    font-style: italic;
+}
+
+.teaser-timer {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--sun);
+    margin-bottom: 0.5rem;
+}
+
+.teaser-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 215, 0, 0.2);
+    border-radius: 2px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--sun);
+    border-radius: 2px;
+    transition: width 1s ease;
+    width: 0%;
+}
+
+/* ---------- UNLOCKED STATE ---------- */
+.unlocked-view {
+    display: none;
+}
+
+/* ---------- CARD SLOTS ---------- */
+.vault-slot {
+    aspect-ratio: 3/4;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--card-purple);
+    transition: transform 0.3s;
+}
+
+.vault-slot:hover {
+    transform: translateY(-6px);
+}
+
+.vault-card-back {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--card-deep-purple), var(--card-mid-purple));
+    position: relative;
+}
+
+.vault-card-back::after {
+    content: '?';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: 4rem;
+    color: var(--card-lavender);
+    opacity: 0.3;
+}
+
+.drop-date {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    color: var(--card-beige);
+    font-size: 0.9rem;
+}
+
+/* ---------- RARITY BORDERS ---------- */
+.rarity-common   { border: 2px solid #333333; }
+.rarity-uncommon { border: 2px solid #FFFFFF; box-shadow: 0 0 8px rgba(255,255,255,0.15); }
+.rarity-rare     { border: 2px solid #4169E1; box-shadow: 0 0 10px rgba(65,105,225,0.3); }
+.rarity-mythic   { border: 2px solid #B22222; box-shadow: 0 0 12px rgba(178,34,34,0.4); }
+.rarity-gold     { border: 2px solid #FFD700; box-shadow: 0 0 18px rgba(255,215,0,0.5); }
+
+/* ---------- GRIDS ---------- */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ---------- STATUS BADGES ---------- */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+.status-locked { background: var(--lava); }
+.status-unlocked { background: var(--fungus); }
+.status-hidden { background: var(--spirit); }
+.status-teaser { background: var(--sun); color: black; }
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 1023px) {
+    .seal-sigil {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .locked-title {
+        font-size: 2rem;
+    }
+    
+    .lock-timer {
+        font-size: 1.5rem;
+    }
+    
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .collection-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

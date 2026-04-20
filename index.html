@@ -5,36 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kloak & Daggurrs: Klandestine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&family=Metamorphous&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .hero {
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+        .hero-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 4rem;
+        }
+        .hero-text {
+            flex: 1;
+            text-align: left;
+        }
+        .hero-text h1 {
+            font-size: 4rem;
+            color: var(--card-lavender);
+            text-shadow: 0 0 20px var(--card-purple);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-display);
+        }
+        .hero-text .subtitle {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--card-beige);
+            margin-bottom: 1rem;
+        }
+        .hero-text .tagline {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .hero-card {
+            flex: 0 0 300px;
+            perspective: 1000px;
+        }
+        .card-flip {
+            width: 300px;
+            height: 420px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .card-flip:hover {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--card-purple);
+        }
+        .card-front img, .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .blurred-front {
+            filter: blur(4px) brightness(0.8);
+            transition: filter 0.3s;
+        }
+        .card-flip:hover .blurred-front {
+            filter: blur(0) brightness(1);
+        }
+        .card-back .blurred {
+            filter: blur(8px) brightness(0.6);
+        }
+        .card-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: var(--card-lavender);
+            text-shadow: 0 0 20px var(--card-purple);
+            pointer-events: none;
+            font-family: var(--font-display);
+        }
+        .countdown {
+            font-family: var(--font-display);
+            color: var(--card-gold);
+            font-size: 1.2rem;
+        }
+        @media (max-width: 1023px) {
+            .hero-content { flex-direction: column; gap: 2rem; }
+            .hero-text h1 { font-size: 2.2rem; }
+            .hero-text .subtitle { font-size: 1.6rem; }
+            .hero-card { flex: none; width: 100%; max-width: 280px; margin: 0 auto; }
+            .card-flip { width: 100%; height: 380px; }
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar">
-    <a href="index.html" class="logo-link">
-        <div class="logo font-display">Kloak & Daggurrs</div>
-    </a>
-    <a href="index.html" class="nav-logo-right">
-        <img src="assets/logo-icon.png" alt="K&D">
-    </a>
-    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
-    <div class="nav-links" id="navLinks">
-        <div class="dropdown">
-            <a href="factions.html">Factions</a>
-            <div class="dropdown-content">
-                <a href="set-fehu.html">Fehu</a>
-                <a href="set-godrin.html">Coming Soon</a>
+    <nav class="navbar">
+        <a href="index.html" class="logo-link">
+            <div class="logo font-display">Kloak & Daggurrs</div>
+        </a>
+        <a href="index.html" class="nav-logo-right">
+            <img src="assets/logo-icon.png" alt="K&D">
+        </a>
+        <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <div class="dropdown">
+                <a href="factions.html">Factions</a>
+                <div class="dropdown-content">
+                    <a href="factions.html">All Factions</a>
+                    <a href="set-fehu.html">Fehu</a>
+                    <a href="set-godrin.html">Godrin</a>
+                    <a href="set-braided.html">Braided</a>
+                </div>
             </div>
+            <a href="vault.html">Vault</a>
+            <a href="whispers.html">Whispers</a>
+            <a href="learn-to-play.html">Learn to Play</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
+            <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
         </div>
-        <a href="vault.html">Vault</a>
-        <a href="whispers.html">Whispers</a>
-        <a href="qa.html">Q&A</a>
-        <a href="contact.html">Contact</a>
-        <a href="admin.html" id="adminLink" class="admin-link" style="display: none;">Admin Portal</a>
-        <a href="login.html" id="authBtn" class="btn-login">Sign In</a>
-    </div>
-</nav>
+    </nav>
 
     <header class="hero">
         <div class="hero-content">
